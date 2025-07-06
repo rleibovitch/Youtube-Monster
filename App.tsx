@@ -3,8 +3,9 @@ import { UrlInputForm } from './components/UrlInputForm';
 import { YouTubePlayer } from './components/YouTubePlayer';
 import { MonsterDetector } from './components/MonsterDetector';
 import { ContextualInfoPanel } from './components/ContextualInfoPanel';
+import { HistoryPanel } from './components/HistoryPanel';
 import { generateAnalysis } from './services/geminiService';
-import type { AnalysisEvent } from './types';
+import type { AnalysisEvent, HistoryItem } from './types';
 import { LogoIcon } from './components/icons';
 import { EVENT_PENALTIES } from './constants';
 
@@ -19,6 +20,7 @@ const App: React.FC = () => {
     const [activeDetections, setActiveDetections] = useState<AnalysisEvent[]>([]);
     const [kidFriendlyScore, setKidFriendlyScore] = useState<number | null>(null);
     const [videoDuration, setVideoDuration] = useState<number | null>(null);
+    const [history, setHistory] = useState<HistoryItem[]>([]);
     
     const playerRef = useRef<YT.Player | null>(null);
 
@@ -63,6 +65,7 @@ const App: React.FC = () => {
         setVideoId(null);
         setKidFriendlyScore(null);
         setVideoDuration(null);
+        setYoutubeUrl(url);
         
         const extractedId = extractVideoId(url);
         if (!extractedId) {
@@ -105,6 +108,22 @@ const App: React.FC = () => {
         playerRef.current?.seekTo(time, true);
     };
 
+    const handleHistoryClick = (item: HistoryItem) => {
+        setIsLoading(false);
+        setError(null);
+
+        setYoutubeUrl(item.youtubeUrl);
+        setVideoId(item.videoId);
+        setVideoTitle(item.videoTitle);
+        setAnalysisEvents(item.analysisEvents);
+        setKidFriendlyScore(item.kidFriendlyScore);
+        
+        setCurrentTime(0);
+        setVideoDuration(null);
+        
+        playerRef.current?.seekTo(0, true);
+    };
+
     useEffect(() => {
         const active = analysisEvents.filter(event => 
             currentTime >= event.timestamp && currentTime < event.timestamp + 5
@@ -113,15 +132,32 @@ const App: React.FC = () => {
     }, [currentTime, analysisEvents]);
 
     useEffect(() => {
-        // A score can be calculated as soon as the video duration is known.
-        // It will be recalculated if the analysis events change.
         if (videoDuration !== null) {
             const score = calculateScore(analysisEvents, videoDuration);
             setKidFriendlyScore(score);
+
+            // Once all data is available for a new video, add it to history.
+            if (videoId && videoTitle && analysisEvents.length > 0 && youtubeUrl) {
+                const newHistoryItem: HistoryItem = {
+                   videoId,
+                   videoTitle,
+                   youtubeUrl,
+                   analysisEvents,
+                   kidFriendlyScore: score,
+                };
+                
+                setHistory(prevHistory => {
+                    // Remove any existing entry for this videoId to prevent duplicates
+                    const filteredHistory = prevHistory.filter(item => item.videoId !== videoId);
+                    // Add the new or updated item to the front
+                    return [newHistoryItem, ...filteredHistory];
+                });
+            }
         } else {
             setKidFriendlyScore(null);
         }
-    }, [analysisEvents, videoDuration]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [analysisEvents, videoDuration, videoId, videoTitle]); // youtubeUrl is intentionally omitted to avoid loops on manual input change
 
 
     return (
@@ -165,6 +201,10 @@ const App: React.FC = () => {
                     />
                 </div>
             </main>
+
+            {history.length > 0 && (
+                <HistoryPanel history={history} onItemClick={handleHistoryClick} />
+            )}
         </div>
     );
 };

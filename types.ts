@@ -10,3 +10,11 @@ export interface AnalysisEvent {
   subCategory: string;
   description: string;
 }
+
+export interface HistoryItem {
+  videoId: string;
+  videoTitle: string;
+  youtubeUrl: string;
+  analysisEvents: AnalysisEvent[];
+  kidFriendlyScore: number | null;
+}

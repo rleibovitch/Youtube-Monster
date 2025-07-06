@@ -1,0 +1,5 @@
+{
+  "name": "YouTube Monster Scanner",
+  "description": "An application that analyzes YouTube videos for negative speech and behavioral patterns using AI. It provides a real-time overlay and a contextual timeline of detected events.",
+  "requestFramePermissions": []
+}

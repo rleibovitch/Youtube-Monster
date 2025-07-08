@@ -6,7 +6,7 @@
   "scripts": {
     "start": "vercel dev",
     "dev": "vercel dev",
-    "build": "esbuild index.tsx --bundle --outfile=public/bundle.js --jsx=transform && copyfiles -f index.html public && copyfiles -f api/* public/api/",
+    "build": "esbuild index.tsx --bundle --outfile=public/bundle.js --jsx=transform && copyfiles -f index.html public",
     "deploy": "vercel --prod"
   },
   "dependencies": {

@@ -10,13 +10,5 @@
       "source": "/api/:path*",
       "destination": "/api/:path*"
     }
-  ],
-  "functions": {
-    "api/analyze.ts": {
-      "runtime": "@vercel/node"
-    },
-    "api/video/[videoId].ts": {
-      "runtime": "@vercel/node"
-    }
-  }
+  ]
 }

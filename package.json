@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "start": "vercel dev",
-    "build": "copyfiles index.html public && esbuild index.tsx --bundle --outfile=public/bundle.js --jsx=transform"
+    "dev": "vercel dev",
+    "build": "esbuild index.tsx --bundle --outfile=public/bundle.js --jsx=transform && copyfiles -f index.html public && copyfiles -f api/* public/api/",
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "@google/genai": "^1.8.0",

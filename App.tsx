@@ -4,7 +4,10 @@ import { YouTubePlayer } from './components/YouTubePlayer';
 import { MonsterDetector } from './components/MonsterDetector';
 import { ContextualInfoPanel } from './components/ContextualInfoPanel';
 import { HistoryPanel } from './components/HistoryPanel';
+import { VideoIndexPanel } from './components/VideoIndexPanel';
+import { Router } from './components/Router';
 import { generateAnalysis } from './services/geminiService';
+import { videoIndexService } from './services/videoIndexService';
 import type { AnalysisEvent, HistoryItem } from './types';
 import { LogoIcon } from './components/icons';
 import { EVENT_PENALTIES } from './constants';
@@ -21,6 +24,8 @@ const App: React.FC = () => {
     const [kidFriendlyScore, setKidFriendlyScore] = useState<number | null>(null);
     const [videoDuration, setVideoDuration] = useState<number | null>(null);
     const [history, setHistory] = useState<HistoryItem[]>([]);
+    const [indexedVideos, setIndexedVideos] = useState<HistoryItem[]>([]);
+    const [showIndexPanel, setShowIndexPanel] = useState<boolean>(false);
     
     const playerRef = useRef<YT.Player | null>(null);
 
@@ -57,6 +62,10 @@ const App: React.FC = () => {
         return duration / penaltySum;
     };
 
+    const updateUrl = (newVideoId: string) => {
+        const newUrl = `/video/${newVideoId}`;
+        window.history.pushState(null, '', newUrl);
+    };
 
     const handleAnalyze = async (url: string) => {
         setIsLoading(true);
@@ -78,6 +87,7 @@ const App: React.FC = () => {
             const events = await generateAnalysis('a heated online debate or argument');
             setAnalysisEvents(events.sort((a, b) => a.timestamp - b.timestamp));
             setVideoId(extractedId);
+            updateUrl(extractedId);
         } catch (e) {
             console.error(e);
             if (e instanceof Error) {
@@ -122,6 +132,25 @@ const App: React.FC = () => {
         setVideoDuration(null);
         
         playerRef.current?.seekTo(0, true);
+        updateUrl(item.videoId);
+    };
+
+    const handleVideoLoad = (video: HistoryItem) => {
+        setYoutubeUrl(video.youtubeUrl);
+        setVideoId(video.videoId);
+        setVideoTitle(video.videoTitle);
+        setAnalysisEvents(video.analysisEvents);
+        setKidFriendlyScore(video.kidFriendlyScore);
+        setCurrentTime(0);
+        setVideoDuration(null);
+    };
+
+    const handleIndexVideoClick = (item: HistoryItem) => {
+        handleHistoryClick(item);
+    };
+
+    const refreshIndexedVideos = () => {
+        setIndexedVideos(videoIndexService.getAllVideos());
     };
 
     useEffect(() => {
@@ -136,7 +165,7 @@ const App: React.FC = () => {
             const score = calculateScore(analysisEvents, videoDuration);
             setKidFriendlyScore(score);
 
-            // Once all data is available for a new video, add it to history.
+            // Once all data is available for a new video, add it to history and index
             if (videoId && videoTitle && analysisEvents.length > 0 && youtubeUrl) {
                 const newHistoryItem: HistoryItem = {
                    videoId,
@@ -152,6 +181,10 @@ const App: React.FC = () => {
                     // Add the new or updated item to the front
                     return [newHistoryItem, ...filteredHistory];
                 });
+
+                // Add to video index
+                videoIndexService.addVideo(newHistoryItem);
+                refreshIndexedVideos();
             }
         } else {
             setKidFriendlyScore(null);
@@ -159,53 +192,76 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [analysisEvents, videoDuration, videoId, videoTitle]); // youtubeUrl is intentionally omitted to avoid loops on manual input change
 
+    useEffect(() => {
+        // Load indexed videos on component mount
+        refreshIndexedVideos();
+    }, []);
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-900">
-            <header className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <LogoIcon />
-                    <h1 className="text-xl font-bold text-gray-100">YouTube Monster Scanner</h1>
-                </div>
-                <UrlInputForm onSubmit={handleAnalyze} isLoading={isLoading} initialUrl={youtubeUrl} />
-            </header>
-            
-            <main className="flex-grow grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
-                <div className="lg:col-span-2 flex flex-col gap-4">
-                    <div className="flex-grow aspect-video bg-black rounded-lg overflow-hidden shadow-2xl shadow-black/50">
-                        {videoId ? (
-                            <YouTubePlayer 
-                                videoId={videoId} 
-                                onReady={handlePlayerReady}
-                                onTimeUpdate={handleTimeUpdate} 
-                                onDurationChange={handleDurationChange}
-                            />
-                        ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800">
-                                <p className="text-gray-400">Enter a YouTube URL to begin analysis.</p>
-                                {error && <p className="mt-4 text-red-400 bg-red-900/50 px-4 py-2 rounded-md">{error}</p>}
-                            </div>
-                        )}
+        <Router onVideoLoad={handleVideoLoad}>
+            <div className="min-h-screen flex flex-col bg-gray-900">
+                <header className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <LogoIcon />
+                        <h1 className="text-xl font-bold text-gray-100">YouTube Monster Scanner</h1>
                     </div>
-                    <MonsterDetector activeDetections={activeDetections} />
-                </div>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => setShowIndexPanel(!showIndexPanel)}
+                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors"
+                        >
+                            {showIndexPanel ? 'Hide Index' : 'Show Index'}
+                        </button>
+                        <UrlInputForm onSubmit={handleAnalyze} isLoading={isLoading} initialUrl={youtubeUrl} />
+                    </div>
+                </header>
                 
-                <div className="lg:col-span-1">
-                    <ContextualInfoPanel 
-                      events={analysisEvents} 
-                      activeDetections={activeDetections}
-                      onCardClick={handleSeekTo} 
-                      videoTitle={videoTitle}
-                      isLoading={isLoading}
-                      kidFriendlyScore={kidFriendlyScore}
-                    />
-                </div>
-            </main>
+                <main className="flex-grow grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
+                    <div className="lg:col-span-2 flex flex-col gap-4">
+                        <div className="flex-grow aspect-video bg-black rounded-lg overflow-hidden shadow-2xl shadow-black/50">
+                            {videoId ? (
+                                <YouTubePlayer 
+                                    videoId={videoId} 
+                                    onReady={handlePlayerReady}
+                                    onTimeUpdate={handleTimeUpdate} 
+                                    onDurationChange={handleDurationChange}
+                                />
+                            ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800">
+                                    <p className="text-gray-400">Enter a YouTube URL to begin analysis.</p>
+                                    {error && <p className="mt-4 text-red-400 bg-red-900/50 px-4 py-2 rounded-md">{error}</p>}
+                                </div>
+                            )}
+                        </div>
+                        <MonsterDetector activeDetections={activeDetections} />
+                    </div>
+                    
+                    <div className="lg:col-span-1">
+                        <ContextualInfoPanel 
+                          events={analysisEvents} 
+                          activeDetections={activeDetections}
+                          onCardClick={handleSeekTo} 
+                          videoTitle={videoTitle}
+                          isLoading={isLoading}
+                          kidFriendlyScore={kidFriendlyScore}
+                        />
+                    </div>
+                </main>
 
-            {history.length > 0 && (
-                <HistoryPanel history={history} onItemClick={handleHistoryClick} />
-            )}
-        </div>
+                {showIndexPanel && (
+                    <div className="border-t border-gray-700/50 p-4">
+                        <VideoIndexPanel 
+                            indexedVideos={indexedVideos} 
+                            onVideoClick={handleIndexVideoClick} 
+                        />
+                    </div>
+                )}
+
+                {history.length > 0 && !showIndexPanel && (
+                    <HistoryPanel history={history} onItemClick={handleHistoryClick} />
+                )}
+            </div>
+        </Router>
     );
 };
 

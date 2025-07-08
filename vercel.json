@@ -3,8 +3,20 @@
   "outputDirectory": "public",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/video/:videoId",
       "destination": "/index.html"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     }
-  ]
+  ],
+  "functions": {
+    "api/analyze.ts": {
+      "runtime": "@vercel/node"
+    },
+    "api/video/[videoId].ts": {
+      "runtime": "@vercel/node"
+    }
+  }
 }

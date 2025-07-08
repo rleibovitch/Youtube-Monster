@@ -1085,7 +1085,7 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState4(initialState) {
+          function useState5(initialState) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState);
           }
@@ -1097,7 +1097,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect4(create, deps) {
+          function useEffect5(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1880,7 +1880,7 @@
           exports.useContext = useContext;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect4;
+          exports.useEffect = useEffect5;
           exports.useId = useId;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useInsertionEffect = useInsertionEffect;
@@ -1888,7 +1888,7 @@
           exports.useMemo = useMemo;
           exports.useReducer = useReducer;
           exports.useRef = useRef3;
-          exports.useState = useState4;
+          exports.useState = useState5;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -2384,9 +2384,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React6 = require_react();
+          var React7 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React6.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -2435,7 +2435,7 @@
           var HostPortal = 4;
           var HostComponent = 5;
           var HostText = 6;
-          var Fragment3 = 7;
+          var Fragment4 = 7;
           var Mode = 8;
           var ContextConsumer = 9;
           var ContextProvider = 10;
@@ -3592,7 +3592,7 @@
                 return "DehydratedFragment";
               case ForwardRef:
                 return getWrappedName$1(type, type.render, "ForwardRef");
-              case Fragment3:
+              case Fragment4:
                 return "Fragment";
               case HostComponent:
                 return type;
@@ -3993,7 +3993,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React6.Children.forEach(props.children, function(child) {
+                  React7.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -12021,7 +12021,7 @@
               }
             }
             function updateFragment2(returnFiber, current2, fragment, lanes, key) {
-              if (current2 === null || current2.tag !== Fragment3) {
+              if (current2 === null || current2.tag !== Fragment4) {
                 var created = createFiberFromFragment(fragment, returnFiber.mode, lanes, key);
                 created.return = returnFiber;
                 return created;
@@ -12424,7 +12424,7 @@
                 if (child.key === key) {
                   var elementType = element.type;
                   if (elementType === REACT_FRAGMENT_TYPE) {
-                    if (child.tag === Fragment3) {
+                    if (child.tag === Fragment4) {
                       deleteRemainingChildren(returnFiber, child.sibling);
                       var existing = useFiber(child, element.props.children);
                       existing.return = returnFiber;
@@ -17900,7 +17900,7 @@
                 var _resolvedProps2 = workInProgress2.elementType === type ? _unresolvedProps2 : resolveDefaultProps(type, _unresolvedProps2);
                 return updateForwardRef(current2, workInProgress2, type, _resolvedProps2, renderLanes2);
               }
-              case Fragment3:
+              case Fragment4:
                 return updateFragment(current2, workInProgress2, renderLanes2);
               case Mode:
                 return updateMode(current2, workInProgress2, renderLanes2);
@@ -18172,7 +18172,7 @@
               case SimpleMemoComponent:
               case FunctionComponent:
               case ForwardRef:
-              case Fragment3:
+              case Fragment4:
               case Mode:
               case Profiler:
               case ContextConsumer:
@@ -22433,7 +22433,7 @@
             return fiber;
           }
           function createFiberFromFragment(elements, mode, lanes, key) {
-            var fiber = createFiber(Fragment3, elements, key, mode);
+            var fiber = createFiber(Fragment4, elements, key, mode);
             fiber.lanes = lanes;
             return fiber;
           }
@@ -23589,7 +23589,7 @@
       if (true) {
         (function() {
           "use strict";
-          var React6 = require_react();
+          var React7 = require_react();
           var REACT_ELEMENT_TYPE = Symbol.for("react.element");
           var REACT_PORTAL_TYPE = Symbol.for("react.portal");
           var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -23615,7 +23615,7 @@
             }
             return null;
           }
-          var ReactSharedInternals = React6.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function error(format) {
             {
               {
@@ -24465,11 +24465,11 @@
               return jsxWithValidation(type, props, key, false);
             }
           }
-          var jsx9 = jsxWithValidationDynamic;
-          var jsxs7 = jsxWithValidationStatic;
+          var jsx11 = jsxWithValidationDynamic;
+          var jsxs8 = jsxWithValidationStatic;
           exports.Fragment = REACT_FRAGMENT_TYPE;
-          exports.jsx = jsx9;
-          exports.jsxs = jsxs7;
+          exports.jsx = jsx11;
+          exports.jsxs = jsxs8;
         })();
       }
     }
@@ -24488,11 +24488,11 @@
   });
 
   // index.tsx
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // App.tsx
-  var import_react4 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
 
   // components/UrlInputForm.tsx
   var import_react = __toESM(require_react());
@@ -24903,6 +24903,185 @@
     ] });
   };
 
+  // components/VideoIndexPanel.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var VideoIndexPanel = ({ indexedVideos, onVideoClick }) => {
+    const formatScore = (score) => {
+      if (score === null) return "N/A";
+      if (score === Infinity) return "Perfect";
+      return `${score.toFixed(1)}s/violation`;
+    };
+    const getScoreColor = (score) => {
+      if (score === null) return "text-gray-400";
+      if (score === Infinity) return "text-green-400";
+      if (score >= 100) return "text-green-400";
+      if (score >= 50) return "text-yellow-400";
+      if (score >= 20) return "text-orange-400";
+      return "text-red-400";
+    };
+    const getViolationCount = (events) => {
+      return events.length;
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "bg-gray-800 rounded-lg p-4 shadow-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-center justify-between mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "text-lg font-semibold text-gray-100", children: "Indexed Videos" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "text-sm text-gray-400", children: [
+          indexedVideos.length,
+          " videos"
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "space-y-3 max-h-96 overflow-y-auto", children: indexedVideos.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-center py-8", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-gray-400", children: "No videos indexed yet" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-sm text-gray-500 mt-1", children: "Analyze videos to add them to the index" })
+      ] }) : indexedVideos.map((video) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+        "div",
+        {
+          onClick: () => onVideoClick(video),
+          className: "bg-gray-700 rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition-colors border border-gray-600 hover:border-gray-500",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-start justify-between mb-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h4", { className: "text-sm font-medium text-gray-100 line-clamp-2 flex-1 mr-2", children: video.videoTitle }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-col items-end text-xs", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `font-semibold ${getScoreColor(video.kidFriendlyScore)}`, children: formatScore(video.kidFriendlyScore) }),
+                /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "text-gray-400", children: [
+                  getViolationCount(video.analysisEvents),
+                  " violations"
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-center justify-between text-xs text-gray-400", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "truncate", children: video.videoId }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                "a",
+                {
+                  href: `/video/${video.videoId}`,
+                  onClick: (e) => e.stopPropagation(),
+                  className: "text-blue-400 hover:text-blue-300 transition-colors",
+                  children: "View Page"
+                }
+              )
+            ] })
+          ]
+        },
+        video.videoId
+      )) })
+    ] });
+  };
+
+  // components/Router.tsx
+  var import_react4 = __toESM(require_react());
+
+  // services/videoIndexService.ts
+  var videoIndex = [];
+  var videoIndexService = {
+    // Add or update a video in the index
+    addVideo: (video) => {
+      const existingIndex = videoIndex.findIndex((v) => v.videoId === video.videoId);
+      if (existingIndex >= 0) {
+        videoIndex[existingIndex] = video;
+      } else {
+        videoIndex.push(video);
+      }
+      try {
+        localStorage.setItem("youtube-monster-index", JSON.stringify(videoIndex));
+      } catch (e) {
+        console.warn("Failed to save to localStorage:", e);
+      }
+    },
+    // Get all indexed videos
+    getAllVideos: () => {
+      return [...videoIndex];
+    },
+    // Get a specific video by ID
+    getVideo: (videoId) => {
+      return videoIndex.find((v) => v.videoId === videoId);
+    },
+    // Remove a video from the index
+    removeVideo: (videoId) => {
+      const initialLength = videoIndex.length;
+      videoIndex = videoIndex.filter((v) => v.videoId !== videoId);
+      if (videoIndex.length !== initialLength) {
+        try {
+          localStorage.setItem("youtube-monster-index", JSON.stringify(videoIndex));
+        } catch (e) {
+          console.warn("Failed to save to localStorage:", e);
+        }
+        return true;
+      }
+      return false;
+    },
+    // Load videos from localStorage on app start
+    loadFromStorage: () => {
+      try {
+        const stored = localStorage.getItem("youtube-monster-index");
+        if (stored) {
+          videoIndex = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn("Failed to load from localStorage:", e);
+        videoIndex = [];
+      }
+    },
+    // Get video statistics
+    getStats: () => {
+      const totalVideos = videoIndex.length;
+      const perfectVideos = videoIndex.filter((v) => v.kidFriendlyScore === Infinity).length;
+      const highScoreVideos = videoIndex.filter((v) => v.kidFriendlyScore !== null && v.kidFriendlyScore >= 100).length;
+      const totalViolations = videoIndex.reduce((sum, v) => sum + v.analysisEvents.length, 0);
+      return {
+        totalVideos,
+        perfectVideos,
+        highScoreVideos,
+        totalViolations,
+        averageViolations: totalVideos > 0 ? (totalViolations / totalVideos).toFixed(1) : "0"
+      };
+    },
+    // Search videos by title or ID
+    searchVideos: (query) => {
+      const lowerQuery = query.toLowerCase();
+      return videoIndex.filter(
+        (video) => video.videoTitle.toLowerCase().includes(lowerQuery) || video.videoId.toLowerCase().includes(lowerQuery)
+      );
+    },
+    // Get videos sorted by score (best first)
+    getVideosByScore: () => {
+      return [...videoIndex].sort((a, b) => {
+        if (a.kidFriendlyScore === null && b.kidFriendlyScore === null) return 0;
+        if (a.kidFriendlyScore === null) return 1;
+        if (b.kidFriendlyScore === null) return -1;
+        if (a.kidFriendlyScore === Infinity && b.kidFriendlyScore === Infinity) return 0;
+        if (a.kidFriendlyScore === Infinity) return -1;
+        if (b.kidFriendlyScore === Infinity) return 1;
+        return b.kidFriendlyScore - a.kidFriendlyScore;
+      });
+    }
+  };
+
+  // components/Router.tsx
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var Router = ({ children, onVideoLoad }) => {
+    const [isLoading, setIsLoading] = (0, import_react4.useState)(true);
+    (0, import_react4.useEffect)(() => {
+      videoIndexService.loadFromStorage();
+      const path = window.location.pathname;
+      const videoMatch = path.match(/^\/video\/([^\/]+)$/);
+      if (videoMatch) {
+        const videoId = videoMatch[1];
+        const video = videoIndexService.getVideo(videoId);
+        if (video) {
+          onVideoLoad(video);
+        } else {
+          window.history.replaceState(null, "", "/");
+        }
+      }
+      setIsLoading(false);
+    }, [onVideoLoad]);
+    if (isLoading) {
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "min-h-screen flex items-center justify-center bg-gray-900", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "text-gray-400", children: "Loading..." }) });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_jsx_runtime8.Fragment, { children });
+  };
+
   // services/geminiService.ts
   var generateAnalysis = async (videoTopic) => {
     try {
@@ -24934,20 +25113,22 @@
   };
 
   // App.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var App = () => {
-    const [youtubeUrl, setYoutubeUrl] = (0, import_react4.useState)("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-    const [videoId, setVideoId] = (0, import_react4.useState)(null);
-    const [videoTitle, setVideoTitle] = (0, import_react4.useState)("");
-    const [isLoading, setIsLoading] = (0, import_react4.useState)(false);
-    const [error, setError] = (0, import_react4.useState)(null);
-    const [analysisEvents, setAnalysisEvents] = (0, import_react4.useState)([]);
-    const [currentTime, setCurrentTime] = (0, import_react4.useState)(0);
-    const [activeDetections, setActiveDetections] = (0, import_react4.useState)([]);
-    const [kidFriendlyScore, setKidFriendlyScore] = (0, import_react4.useState)(null);
-    const [videoDuration, setVideoDuration] = (0, import_react4.useState)(null);
-    const [history, setHistory] = (0, import_react4.useState)([]);
-    const playerRef = (0, import_react4.useRef)(null);
+    const [youtubeUrl, setYoutubeUrl] = (0, import_react5.useState)("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+    const [videoId, setVideoId] = (0, import_react5.useState)(null);
+    const [videoTitle, setVideoTitle] = (0, import_react5.useState)("");
+    const [isLoading, setIsLoading] = (0, import_react5.useState)(false);
+    const [error, setError] = (0, import_react5.useState)(null);
+    const [analysisEvents, setAnalysisEvents] = (0, import_react5.useState)([]);
+    const [currentTime, setCurrentTime] = (0, import_react5.useState)(0);
+    const [activeDetections, setActiveDetections] = (0, import_react5.useState)([]);
+    const [kidFriendlyScore, setKidFriendlyScore] = (0, import_react5.useState)(null);
+    const [videoDuration, setVideoDuration] = (0, import_react5.useState)(null);
+    const [history, setHistory] = (0, import_react5.useState)([]);
+    const [indexedVideos, setIndexedVideos] = (0, import_react5.useState)([]);
+    const [showIndexPanel, setShowIndexPanel] = (0, import_react5.useState)(false);
+    const playerRef = (0, import_react5.useRef)(null);
     const extractVideoId = (url) => {
       try {
         const urlObj = new URL(url);
@@ -24974,6 +25155,10 @@
       }
       return duration / penaltySum;
     };
+    const updateUrl = (newVideoId) => {
+      const newUrl = `/video/${newVideoId}`;
+      window.history.pushState(null, "", newUrl);
+    };
     const handleAnalyze = async (url) => {
       setIsLoading(true);
       setError(null);
@@ -24992,6 +25177,7 @@
         const events = await generateAnalysis("a heated online debate or argument");
         setAnalysisEvents(events.sort((a, b) => a.timestamp - b.timestamp));
         setVideoId(extractedId);
+        updateUrl(extractedId);
       } catch (e) {
         console.error(e);
         if (e instanceof Error) {
@@ -25003,15 +25189,15 @@
         setIsLoading(false);
       }
     };
-    const handlePlayerReady = (0, import_react4.useCallback)((player) => {
+    const handlePlayerReady = (0, import_react5.useCallback)((player) => {
       playerRef.current = player;
       const videoData = player.getVideoData();
       setVideoTitle(videoData.title);
     }, []);
-    const handleDurationChange = (0, import_react4.useCallback)((duration) => {
+    const handleDurationChange = (0, import_react5.useCallback)((duration) => {
       setVideoDuration(duration);
     }, []);
-    const handleTimeUpdate = (0, import_react4.useCallback)((time) => {
+    const handleTimeUpdate = (0, import_react5.useCallback)((time) => {
       setCurrentTime(time);
     }, []);
     const handleSeekTo = (time) => {
@@ -25028,14 +25214,30 @@
       setCurrentTime(0);
       setVideoDuration(null);
       playerRef.current?.seekTo(0, true);
+      updateUrl(item.videoId);
     };
-    (0, import_react4.useEffect)(() => {
+    const handleVideoLoad = (video) => {
+      setYoutubeUrl(video.youtubeUrl);
+      setVideoId(video.videoId);
+      setVideoTitle(video.videoTitle);
+      setAnalysisEvents(video.analysisEvents);
+      setKidFriendlyScore(video.kidFriendlyScore);
+      setCurrentTime(0);
+      setVideoDuration(null);
+    };
+    const handleIndexVideoClick = (item) => {
+      handleHistoryClick(item);
+    };
+    const refreshIndexedVideos = () => {
+      setIndexedVideos(videoIndexService.getAllVideos());
+    };
+    (0, import_react5.useEffect)(() => {
       const active = analysisEvents.filter(
         (event) => currentTime >= event.timestamp && currentTime < event.timestamp + 5
       );
       setActiveDetections(active);
     }, [currentTime, analysisEvents]);
-    (0, import_react4.useEffect)(() => {
+    (0, import_react5.useEffect)(() => {
       if (videoDuration !== null) {
         const score = calculateScore(analysisEvents, videoDuration);
         setKidFriendlyScore(score);
@@ -25051,22 +25253,37 @@
             const filteredHistory = prevHistory.filter((item) => item.videoId !== videoId);
             return [newHistoryItem, ...filteredHistory];
           });
+          videoIndexService.addVideo(newHistoryItem);
+          refreshIndexedVideos();
         }
       } else {
         setKidFriendlyScore(null);
       }
     }, [analysisEvents, videoDuration, videoId, videoTitle]);
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "min-h-screen flex flex-col bg-gray-900", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("header", { className: "px-4 py-3 border-b border-gray-700/50 flex items-center justify-between", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(LogoIcon, {}),
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h1", { className: "text-xl font-bold text-gray-100", children: "YouTube Monster Scanner" })
+    (0, import_react5.useEffect)(() => {
+      refreshIndexedVideos();
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Router, { onVideoLoad: handleVideoLoad, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "min-h-screen flex flex-col bg-gray-900", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { className: "px-4 py-3 border-b border-gray-700/50 flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(LogoIcon, {}),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h1", { className: "text-xl font-bold text-gray-100", children: "YouTube Monster Scanner" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(UrlInputForm, { onSubmit: handleAnalyze, isLoading, initialUrl: youtubeUrl })
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+            "button",
+            {
+              onClick: () => setShowIndexPanel(!showIndexPanel),
+              className: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors",
+              children: showIndexPanel ? "Hide Index" : "Show Index"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(UrlInputForm, { onSubmit: handleAnalyze, isLoading, initialUrl: youtubeUrl })
+        ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("main", { className: "flex-grow grid grid-cols-1 lg:grid-cols-3 gap-4 p-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "lg:col-span-2 flex flex-col gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "flex-grow aspect-video bg-black rounded-lg overflow-hidden shadow-2xl shadow-black/50", children: videoId ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("main", { className: "flex-grow grid grid-cols-1 lg:grid-cols-3 gap-4 p-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "lg:col-span-2 flex flex-col gap-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "flex-grow aspect-video bg-black rounded-lg overflow-hidden shadow-2xl shadow-black/50", children: videoId ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             YouTubePlayer,
             {
               videoId,
@@ -25074,13 +25291,13 @@
               onTimeUpdate: handleTimeUpdate,
               onDurationChange: handleDurationChange
             }
-          ) : /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "w-full h-full flex flex-col items-center justify-center bg-gray-800", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-gray-400", children: "Enter a YouTube URL to begin analysis." }),
-            error && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "mt-4 text-red-400 bg-red-900/50 px-4 py-2 rounded-md", children: error })
+          ) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "w-full h-full flex flex-col items-center justify-center bg-gray-800", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "text-gray-400", children: "Enter a YouTube URL to begin analysis." }),
+            error && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "mt-4 text-red-400 bg-red-900/50 px-4 py-2 rounded-md", children: error })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(MonsterDetector, { activeDetections })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(MonsterDetector, { activeDetections })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "lg:col-span-1", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "lg:col-span-1", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           ContextualInfoPanel,
           {
             events: analysisEvents,
@@ -25092,20 +25309,27 @@
           }
         ) })
       ] }),
-      history.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(HistoryPanel, { history, onItemClick: handleHistoryClick })
-    ] });
+      showIndexPanel && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "border-t border-gray-700/50 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        VideoIndexPanel,
+        {
+          indexedVideos,
+          onVideoClick: handleIndexVideoClick
+        }
+      ) }),
+      history.length > 0 && !showIndexPanel && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(HistoryPanel, { history, onItemClick: handleHistoryClick })
+    ] }) });
   };
   var App_default = App;
 
   // index.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var rootElement = document.getElementById("root");
   if (!rootElement) {
     throw new Error("Could not find root element to mount to");
   }
   var root = import_client.default.createRoot(rootElement);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_react5.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(App_default, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(App_default, {}) })
   );
 })();
 /*! Bundled license information:

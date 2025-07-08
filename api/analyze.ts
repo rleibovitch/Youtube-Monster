@@ -1,7 +1,44 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI } from "@google/genai";
-import type { AnalysisEvent } from '../types';
-import { NEGATIVE_SPEECH_SUBCATEGORIES, NEGATIVE_BEHAVIOR_SUBCATEGORIES, POTENTIAL_EMOTIONS_SUBCATEGORIES } from '../constants';
+
+// Define types locally to avoid import issues
+interface AnalysisEvent {
+  timestamp: number;
+  category: string;
+  subCategory: string;
+  description: string;
+}
+
+// Define constants locally
+const NEGATIVE_SPEECH_SUBCATEGORIES: string[] = [
+  'Devaluation of Others',
+  'Entitlement',
+  'Victim Narrative/Self-Pity',
+  'Shame-Laden',
+  'Envy/Resentment',
+  'Passive-Aggression',
+  'Hostility',
+  'Hate Speech',
+  'Impaired Empathy / Dismissiveness',
+  'Incoherence',
+  'Excessive Self-Reference',
+];
+
+const NEGATIVE_BEHAVIOR_SUBCATEGORIES: string[] = [
+  'Bullying',
+  'Harassment',
+  'Drinking alcohol',
+  'Violence',
+  'Sexism',
+];
+
+const POTENTIAL_EMOTIONS_SUBCATEGORIES: string[] = [
+  'Angry',
+  'Fearful/Anxious',
+  'Sad',
+  'Irritated/Impatient',
+  'Cold/Detached',
+];
 
 export default async function handler(
   req: VercelRequest,
@@ -11,8 +48,8 @@ export default async function handler(
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  if (!process.env.API_KEY) {
-    console.error("API_KEY environment variable not set on server");
+  if (!process.env.GEMINI_API_KEY) {
+    console.error("GEMINI_API_KEY environment variable not set on server");
     return res.status(500).json({ error: "Server configuration error: API key is missing." });
   }
   
@@ -22,7 +59,7 @@ export default async function handler(
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const prompt = `
 You are an expert AI content analysis engine. Your task is to generate a mock analysis for a hypothetical YouTube video about "${videoTopic}".
 

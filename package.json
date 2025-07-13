@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "npm run dev",
-    "dev": "npx serve public -p 3000",
+    "dev": "npm run build && npx serve public -p 3000",
+    "dev:watch": "npm run build && npx serve public -p 3000",
     "build": "esbuild index.tsx --bundle --outfile=public/bundle.js --jsx=transform && copyfiles -f index.html public",
     "deploy": "vercel --prod"
   },
@@ -24,7 +25,7 @@
     "@vercel/node": "^3.1.5",
     "copyfiles": "^2.4.1",
     "esbuild": "^0.23.0",
-    "serve": "^14.2.1",
+    "serve": "^14.2.4",
     "typescript": "^5.4.5",
     "vercel": "^34.2.0"
   }

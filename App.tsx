@@ -199,11 +199,11 @@ const App: React.FC = () => {
 
     return (
         <Router onVideoLoad={handleVideoLoad}>
-            <div className="min-h-screen flex flex-col bg-gray-900">
-                <header className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+            <div className="min-h-screen flex flex-col bg-gray-50">
+                <header className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <LogoIcon />
-                        <h1 className="text-xl font-bold text-gray-100">YouTube Monster Scanner</h1>
+                        <h1 className="text-xl font-bold text-gray-900">YouTube Monster Scanner</h1>
                     </div>
                     <div className="flex items-center gap-4">
                         <button
@@ -227,9 +227,9 @@ const App: React.FC = () => {
                                     onDurationChange={handleDurationChange}
                                 />
                             ) : (
-                                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800">
-                                    <p className="text-gray-400">Enter a YouTube URL to begin analysis.</p>
-                                    {error && <p className="mt-4 text-red-400 bg-red-900/50 px-4 py-2 rounded-md">{error}</p>}
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100">
+                                    <p className="text-gray-600">Enter a YouTube URL to begin analysis.</p>
+                                    {error && <p className="mt-4 text-red-600 bg-red-100 px-4 py-2 rounded-md">{error}</p>}
                                 </div>
                             )}
                         </div>
@@ -249,7 +249,7 @@ const App: React.FC = () => {
                 </main>
 
                 {showIndexPanel && (
-                    <div className="border-t border-gray-700/50 p-4">
+                    <div className="border-t border-gray-200 p-4">
                         <VideoIndexPanel 
                             indexedVideos={indexedVideos} 
                             onVideoClick={handleIndexVideoClick} 

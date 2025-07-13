@@ -105,7 +105,7 @@ Here is an example of a valid response format:
             },
         });
         
-        responseText = response.text;
+        responseText = response.text || '';
         let jsonStr = responseText.trim();
         const fenceRegex = /^```(\w*)?\s*\n?(.*?)\n?\s*```$/s;
         const match = jsonStr.match(fenceRegex);

@@ -24545,7 +24545,7 @@
           value: url,
           onChange: (e) => setUrl(e.target.value),
           placeholder: "Enter YouTube URL...",
-          className: "w-64 md:w-96 bg-gray-800 border border-gray-600 rounded-md px-3 py-1.5 text-sm text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all",
+          className: "w-64 md:w-96 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all",
           disabled: isLoading
         }
       ),
@@ -24554,7 +24554,7 @@
         {
           type: "submit",
           disabled: isLoading,
-          className: "flex items-center justify-center gap-2 px-4 py-1.5 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-500 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+          className: "flex items-center justify-center gap-2 px-4 py-1.5 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-500 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white",
           children: isLoading ? /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(LoaderIcon, { className: "animate-spin" }),
             /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: "Analyzing..." })
@@ -24702,17 +24702,17 @@
 
   // components/MonsterDetector.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-  var CategorySection = ({ title, icon, subcategories, activeSubcategories, colorClass }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-gray-800/50 p-4 rounded-lg", children: [
+  var CategorySection = ({ title, icon, subcategories, activeSubcategories, colorClass }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white/80 p-4 rounded-lg border border-gray-200", children: [
     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-3 mb-3", children: [
       icon,
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { className: "text-lg font-bold text-gray-200", children: title })
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { className: "text-lg font-bold text-gray-800", children: title })
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("ul", { className: "space-y-1.5", children: subcategories.map((sub) => {
       const isActive = activeSubcategories.has(sub);
       return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         "li",
         {
-          className: `text-sm transition-all duration-300 rounded-md px-3 py-1.5 ${isActive ? `${colorClass} text-white font-semibold shadow-lg` : "bg-gray-700/50 text-gray-400"}`,
+          className: `text-sm transition-all duration-300 rounded-md px-3 py-1.5 ${isActive ? `${colorClass} text-white font-semibold shadow-lg` : "bg-gray-100 text-gray-600"}`,
           children: sub
         },
         sub
@@ -24729,7 +24729,7 @@
     const activeEmotions = new Set(
       activeDetections.filter((d) => d.category === "Potential Emotions" /* POTENTIAL_EMOTIONS */).map((d) => d.subCategory)
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-gray-800 rounded-lg p-4 shadow-xl shadow-black/30", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white rounded-lg p-4 shadow-xl shadow-gray-200/50 border border-gray-200", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-xl font-bold mb-4 text-center text-red-400", children: "MONSTER DETECTOR ACTIVE" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-col md:grid md:grid-cols-3 gap-4", children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
@@ -24798,24 +24798,24 @@
       return "bg-red-700 border-red-600";
     };
     const displayValue = score === Infinity ? "\u221E" : score.toFixed(1);
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col items-center p-4 mb-4 bg-gray-900/50 rounded-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { className: "text-base font-bold text-gray-300 mb-2", children: "Monster Score" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col items-center p-4 mb-4 bg-gray-50 rounded-lg border border-gray-200", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { className: "text-base font-bold text-gray-700 mb-2", children: "Monster Score" }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: `w-24 h-24 rounded-full flex items-center justify-center text-white shadow-lg border-4 ${getScoreStyle()}`, children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-4xl font-bold tracking-tight", children: displayValue }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-xs text-gray-400 mt-2 text-center", children: "Seconds per Violation | Higher is better" })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-xs text-gray-500 mt-2 text-center", children: "Seconds per Violation | Higher is better" })
     ] });
   };
   var EventList = ({ events, onCardClick }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("ul", { className: "space-y-3", children: events.map((event, index) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
     "li",
     {
       onClick: () => onCardClick(event.timestamp),
-      className: "bg-gray-700/60 rounded-lg p-3 cursor-pointer hover:bg-gray-600/80 transition-all border-l-4",
+      className: "bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-all border-l-4 border border-gray-200",
       style: { borderColor: getCategoryColor(event.category) },
       children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex justify-between items-center", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "font-bold text-sm text-gray-200", children: event.subCategory }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-xs font-mono bg-gray-900 px-2 py-1 rounded", children: formatTimestamp(event.timestamp) })
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "font-bold text-sm text-gray-800", children: event.subCategory }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-xs font-mono bg-gray-200 px-2 py-1 rounded", children: formatTimestamp(event.timestamp) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-gray-300 mt-1", children: event.description })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-gray-600 mt-1", children: event.description })
       ]
     },
     index
@@ -24827,19 +24827,19 @@
         setViewMode("all");
       }
     }, [isLoading, events]);
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-gray-800 rounded-lg shadow-xl shadow-black/30 h-full flex flex-col", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "p-4 border-b border-gray-700", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white rounded-lg shadow-xl shadow-gray-200/50 h-full flex flex-col border border-gray-200", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "p-4 border-b border-gray-200", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("h2", { className: "text-lg font-bold text-gray-100 flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("h2", { className: "text-lg font-bold text-gray-800 flex items-center gap-2", children: [
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(InfoIcon, {}),
             "Contextual Information"
           ] }),
-          !isLoading && events.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex items-center bg-gray-900/70 rounded-lg p-1 text-sm", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => setViewMode("current"), className: `px-3 py-1 rounded-md transition-colors ${viewMode === "current" ? "bg-blue-600 text-white font-semibold" : "text-gray-400 hover:bg-gray-700"}`, children: "Current" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => setViewMode("all"), className: `px-3 py-1 rounded-md transition-colors ${viewMode === "all" ? "bg-blue-600 text-white font-semibold" : "text-gray-400 hover:bg-gray-700"}`, children: "All" })
+          !isLoading && events.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex items-center bg-gray-100 rounded-lg p-1 text-sm", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => setViewMode("current"), className: `px-3 py-1 rounded-md transition-colors ${viewMode === "current" ? "bg-blue-600 text-white font-semibold" : "text-gray-600 hover:bg-gray-200"}`, children: "Current" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: () => setViewMode("all"), className: `px-3 py-1 rounded-md transition-colors ${viewMode === "all" ? "bg-blue-600 text-white font-semibold" : "text-gray-600 hover:bg-gray-200"}`, children: "All" })
           ] })
         ] }),
-        videoTitle && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-sm text-gray-400 mt-2 truncate", children: [
+        videoTitle && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "text-sm text-gray-500 mt-2 truncate", children: [
           "Analyzing: ",
           videoTitle
         ] })
@@ -24878,7 +24878,7 @@
         tabIndex: 0,
         onKeyPress: (e) => (e.key === "Enter" || e.key === " ") && onClick(),
         "aria-label": `Load analysis for ${item.videoTitle}`,
-        className: "group relative flex-shrink-0 w-60 cursor-pointer rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900",
+        className: "group relative flex-shrink-0 w-60 cursor-pointer rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white",
         children: [
           /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("img", { src: thumbnailUrl, alt: item.videoTitle, className: "w-full h-full object-cover", loading: "lazy" }),
           /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:bg-black/70 transition-colors flex flex-col justify-end p-3", children: [
@@ -24890,8 +24890,8 @@
     );
   };
   var HistoryPanel = ({ history, onItemClick }) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("aside", { className: "w-full bg-gray-900/70 backdrop-blur-sm border-t border-gray-700/50 p-4 mt-auto", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-xl font-bold text-gray-100 mb-4 px-2", children: "Analysis History" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("aside", { className: "w-full bg-white/90 backdrop-blur-sm border-t border-gray-200 p-4 mt-auto", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { className: "text-xl font-bold text-gray-800 mb-4 px-2", children: "Analysis History" }),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "flex gap-4 overflow-x-auto pb-4 no-scrollbar", children: history.map((item) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
         HistoryItemCard,
         {
@@ -24922,41 +24922,41 @@
     const getViolationCount = (events) => {
       return events.length;
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "bg-gray-800 rounded-lg p-4 shadow-lg", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "bg-white rounded-lg p-4 shadow-lg border border-gray-200", children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-center justify-between mb-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "text-lg font-semibold text-gray-100", children: "Indexed Videos" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "text-sm text-gray-400", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { className: "text-lg font-semibold text-gray-800", children: "Indexed Videos" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "text-sm text-gray-500", children: [
           indexedVideos.length,
           " videos"
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "space-y-3 max-h-96 overflow-y-auto", children: indexedVideos.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "text-center py-8", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-gray-400", children: "No videos indexed yet" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-sm text-gray-500 mt-1", children: "Analyze videos to add them to the index" })
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-gray-500", children: "No videos indexed yet" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "text-sm text-gray-400 mt-1", children: "Analyze videos to add them to the index" })
       ] }) : indexedVideos.map((video) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
         "div",
         {
           onClick: () => onVideoClick(video),
-          className: "bg-gray-700 rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition-colors border border-gray-600 hover:border-gray-500",
+          className: "bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-colors border border-gray-200 hover:border-gray-300",
           children: [
             /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-start justify-between mb-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h4", { className: "text-sm font-medium text-gray-100 line-clamp-2 flex-1 mr-2", children: video.videoTitle }),
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h4", { className: "text-sm font-medium text-gray-800 line-clamp-2 flex-1 mr-2", children: video.videoTitle }),
               /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex flex-col items-end text-xs", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `font-semibold ${getScoreColor(video.kidFriendlyScore)}`, children: formatScore(video.kidFriendlyScore) }),
-                /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "text-gray-400", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "text-gray-500", children: [
                   getViolationCount(video.analysisEvents),
                   " violations"
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-center justify-between text-xs text-gray-400", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "flex items-center justify-between text-xs text-gray-500", children: [
               /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "truncate", children: video.videoId }),
               /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
                 "a",
                 {
                   href: `/video/${video.videoId}`,
                   onClick: (e) => e.stopPropagation(),
-                  className: "text-blue-400 hover:text-blue-300 transition-colors",
+                  className: "text-blue-600 hover:text-blue-500 transition-colors",
                   children: "View Page"
                 }
               )
@@ -25263,11 +25263,11 @@
     (0, import_react5.useEffect)(() => {
       refreshIndexedVideos();
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Router, { onVideoLoad: handleVideoLoad, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "min-h-screen flex flex-col bg-gray-900", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { className: "px-4 py-3 border-b border-gray-700/50 flex items-center justify-between", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Router, { onVideoLoad: handleVideoLoad, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "min-h-screen flex flex-col bg-gray-50", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { className: "px-4 py-3 border-b border-gray-200 flex items-center justify-between", children: [
         /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(LogoIcon, {}),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h1", { className: "text-xl font-bold text-gray-100", children: "YouTube Monster Scanner" })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h1", { className: "text-xl font-bold text-gray-900", children: "YouTube Monster Scanner" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center gap-4", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
@@ -25291,9 +25291,9 @@
               onTimeUpdate: handleTimeUpdate,
               onDurationChange: handleDurationChange
             }
-          ) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "w-full h-full flex flex-col items-center justify-center bg-gray-800", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "text-gray-400", children: "Enter a YouTube URL to begin analysis." }),
-            error && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "mt-4 text-red-400 bg-red-900/50 px-4 py-2 rounded-md", children: error })
+          ) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "w-full h-full flex flex-col items-center justify-center bg-gray-100", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "text-gray-600", children: "Enter a YouTube URL to begin analysis." }),
+            error && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "mt-4 text-red-600 bg-red-100 px-4 py-2 rounded-md", children: error })
           ] }) }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(MonsterDetector, { activeDetections })
         ] }),
@@ -25309,7 +25309,7 @@
           }
         ) })
       ] }),
-      showIndexPanel && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "border-t border-gray-700/50 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      showIndexPanel && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "border-t border-gray-200 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         VideoIndexPanel,
         {
           indexedVideos,

@@ -27,45 +27,45 @@ export const VideoIndexPanel: React.FC<VideoIndexPanelProps> = ({ indexedVideos,
     };
 
     return (
-        <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
+        <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-100">Indexed Videos</h3>
-                <span className="text-sm text-gray-400">{indexedVideos.length} videos</span>
+                <h3 className="text-lg font-semibold text-gray-800">Indexed Videos</h3>
+                <span className="text-sm text-gray-500">{indexedVideos.length} videos</span>
             </div>
             
             <div className="space-y-3 max-h-96 overflow-y-auto">
                 {indexedVideos.length === 0 ? (
                     <div className="text-center py-8">
-                        <p className="text-gray-400">No videos indexed yet</p>
-                        <p className="text-sm text-gray-500 mt-1">Analyze videos to add them to the index</p>
+                        <p className="text-gray-500">No videos indexed yet</p>
+                        <p className="text-sm text-gray-400 mt-1">Analyze videos to add them to the index</p>
                     </div>
                 ) : (
                     indexedVideos.map((video) => (
                         <div
                             key={video.videoId}
                             onClick={() => onVideoClick(video)}
-                            className="bg-gray-700 rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition-colors border border-gray-600 hover:border-gray-500"
+                            className="bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-colors border border-gray-200 hover:border-gray-300"
                         >
                             <div className="flex items-start justify-between mb-2">
-                                <h4 className="text-sm font-medium text-gray-100 line-clamp-2 flex-1 mr-2">
+                                <h4 className="text-sm font-medium text-gray-800 line-clamp-2 flex-1 mr-2">
                                     {video.videoTitle}
                                 </h4>
                                 <div className="flex flex-col items-end text-xs">
                                     <span className={`font-semibold ${getScoreColor(video.kidFriendlyScore)}`}>
                                         {formatScore(video.kidFriendlyScore)}
                                     </span>
-                                    <span className="text-gray-400">
+                                    <span className="text-gray-500">
                                         {getViolationCount(video.analysisEvents)} violations
                                     </span>
                                 </div>
                             </div>
                             
-                            <div className="flex items-center justify-between text-xs text-gray-400">
+                            <div className="flex items-center justify-between text-xs text-gray-500">
                                 <span className="truncate">{video.videoId}</span>
                                 <a
                                     href={`/video/${video.videoId}`}
                                     onClick={(e) => e.stopPropagation()}
-                                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                                    className="text-blue-600 hover:text-blue-500 transition-colors"
                                 >
                                     View Page
                                 </a>

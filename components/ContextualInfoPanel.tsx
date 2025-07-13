@@ -45,12 +45,12 @@ const ScoreDisplay: React.FC<{ score: number | null }> = ({ score }) => {
     const displayValue = score === Infinity ? '∞' : score.toFixed(1);
 
     return (
-        <div className="flex flex-col items-center p-4 mb-4 bg-gray-900/50 rounded-lg">
-            <h3 className="text-base font-bold text-gray-300 mb-2">Monster Score</h3>
+        <div className="flex flex-col items-center p-4 mb-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h3 className="text-base font-bold text-gray-700 mb-2">Monster Score</h3>
             <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white shadow-lg border-4 ${getScoreStyle()}`}>
                 <span className="text-4xl font-bold tracking-tight">{displayValue}</span>
             </div>
-            <p className="text-xs text-gray-400 mt-2 text-center">Seconds per Violation | Higher is better</p>
+            <p className="text-xs text-gray-500 mt-2 text-center">Seconds per Violation | Higher is better</p>
         </div>
     );
 };
@@ -61,14 +61,14 @@ const EventList: React.FC<{ events: AnalysisEvent[]; onCardClick: (timestamp: nu
             <li
                 key={index}
                 onClick={() => onCardClick(event.timestamp)}
-                className="bg-gray-700/60 rounded-lg p-3 cursor-pointer hover:bg-gray-600/80 transition-all border-l-4"
+                className="bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-all border-l-4 border border-gray-200"
                 style={{ borderColor: getCategoryColor(event.category) }}
             >
                 <div className="flex justify-between items-center">
-                    <span className="font-bold text-sm text-gray-200">{event.subCategory}</span>
-                    <span className="text-xs font-mono bg-gray-900 px-2 py-1 rounded">{formatTimestamp(event.timestamp)}</span>
+                    <span className="font-bold text-sm text-gray-800">{event.subCategory}</span>
+                    <span className="text-xs font-mono bg-gray-200 px-2 py-1 rounded">{formatTimestamp(event.timestamp)}</span>
                 </div>
-                <p className="text-sm text-gray-300 mt-1">{event.description}</p>
+                <p className="text-sm text-gray-600 mt-1">{event.description}</p>
             </li>
         ))}
     </ul>
@@ -85,21 +85,21 @@ export const ContextualInfoPanel: React.FC<ContextualInfoPanelProps> = ({ events
     }, [isLoading, events]);
 
     return (
-        <div className="bg-gray-800 rounded-lg shadow-xl shadow-black/30 h-full flex flex-col">
-            <div className="p-4 border-b border-gray-700">
+        <div className="bg-white rounded-lg shadow-xl shadow-gray-200/50 h-full flex flex-col border border-gray-200">
+            <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                     <h2 className="text-lg font-bold text-gray-100 flex items-center gap-2">
+                     <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                         <InfoIcon />
                         Contextual Information
                     </h2>
                      {!isLoading && events.length > 0 && (
-                        <div className="flex items-center bg-gray-900/70 rounded-lg p-1 text-sm">
-                            <button onClick={() => setViewMode('current')} className={`px-3 py-1 rounded-md transition-colors ${viewMode === 'current' ? 'bg-blue-600 text-white font-semibold' : 'text-gray-400 hover:bg-gray-700'}`}>Current</button>
-                            <button onClick={() => setViewMode('all')} className={`px-3 py-1 rounded-md transition-colors ${viewMode === 'all' ? 'bg-blue-600 text-white font-semibold' : 'text-gray-400 hover:bg-gray-700'}`}>All</button>
+                        <div className="flex items-center bg-gray-100 rounded-lg p-1 text-sm">
+                            <button onClick={() => setViewMode('current')} className={`px-3 py-1 rounded-md transition-colors ${viewMode === 'current' ? 'bg-blue-600 text-white font-semibold' : 'text-gray-600 hover:bg-gray-200'}`}>Current</button>
+                            <button onClick={() => setViewMode('all')} className={`px-3 py-1 rounded-md transition-colors ${viewMode === 'all' ? 'bg-blue-600 text-white font-semibold' : 'text-gray-600 hover:bg-gray-200'}`}>All</button>
                         </div>
                     )}
                 </div>
-                {videoTitle && <p className="text-sm text-gray-400 mt-2 truncate">Analyzing: {videoTitle}</p>}
+                {videoTitle && <p className="text-sm text-gray-500 mt-2 truncate">Analyzing: {videoTitle}</p>}
             </div>
 
             <div className="flex-grow p-4 overflow-y-auto no-scrollbar">

@@ -24730,7 +24730,7 @@
       activeDetections.filter((d) => d.category === "Potential Emotions" /* POTENTIAL_EMOTIONS */).map((d) => d.subCategory)
     );
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white rounded-lg p-4 shadow-xl shadow-gray-200/50 border border-gray-200", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-xl font-bold mb-4 text-center text-red-400", children: "MONSTER DETECTOR ACTIVE" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-xl font-bold mb-4 text-center text-red-400", children: "Sentiment Analysis" }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-col md:grid md:grid-cols-3 gap-4", children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
           CategorySection,
@@ -24804,27 +24804,61 @@
       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-xs text-gray-500 mt-2 text-center", children: "Seconds per Violation | Higher is better" })
     ] });
   };
-  var EventList = ({ events, onCardClick }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("ul", { className: "space-y-3", children: events.map((event, index) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
-    "li",
-    {
-      onClick: () => onCardClick(event.timestamp),
-      className: "bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-all border-l-4 border border-gray-200",
-      style: { borderColor: getCategoryColor(event.category) },
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex justify-between items-center", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "font-bold text-sm text-gray-800", children: event.subCategory }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-xs font-mono bg-gray-200 px-2 py-1 rounded", children: formatTimestamp(event.timestamp) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-gray-600 mt-1", children: event.description })
-      ]
-    },
-    index
-  )) });
+  var EventList = ({ events, onCardClick, expandedTimestamp, onExpand }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("ul", { className: "space-y-3", children: events.map((event, index) => {
+    const isExpanded = expandedTimestamp === event.timestamp;
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+      "li",
+      {
+        onClick: () => {
+          if (onExpand) onExpand(isExpanded ? null : event.timestamp);
+          onCardClick(event.timestamp);
+        },
+        className: `bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-all border-l-4 border border-gray-200 ${isExpanded ? "ring-2 ring-blue-200" : ""}`,
+        style: { borderColor: getCategoryColor(event.category) },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex justify-between items-center", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "font-bold text-sm text-gray-800", children: event.subCategory }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-xs font-mono bg-gray-200 px-2 py-1 rounded", children: formatTimestamp(event.timestamp) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm text-gray-600 mt-1", children: event.description }),
+          isExpanded && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mt-3 p-3 bg-gray-100 rounded", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "mb-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "font-semibold text-gray-700", children: "Phrase:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "ml-2 italic text-gray-800", children: [
+                '"',
+                event.phrase || "No phrase available.",
+                '"'
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "font-semibold text-gray-700", children: "Executive Summary:" }),
+              /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "ml-2 text-gray-700", children: generateExecutiveSummary(event) })
+            ] })
+          ] })
+        ]
+      },
+      index
+    );
+  }) });
+  function generateExecutiveSummary(event) {
+    switch (event.category) {
+      case "Negative Speech" /* SPEECH */:
+        return `Flagged for negative speech (${event.subCategory}): ${event.description}`;
+      case "Negative Behavior" /* BEHAVIOR */:
+        return `Flagged for negative behavior (${event.subCategory}): ${event.description}`;
+      case "Potential Emotions" /* POTENTIAL_EMOTIONS */:
+        return `Flagged for potential negative emotion (${event.subCategory}): ${event.description}`;
+      default:
+        return event.description;
+    }
+  }
   var ContextualInfoPanel = ({ events, activeDetections, onCardClick, videoTitle, isLoading, kidFriendlyScore }) => {
     const [viewMode, setViewMode] = (0, import_react3.useState)("all");
+    const [expandedTimestamp, setExpandedTimestamp] = (0, import_react3.useState)(null);
     (0, import_react3.useEffect)(() => {
       if (isLoading || events.length === 0) {
         setViewMode("all");
+        setExpandedTimestamp(null);
       }
     }, [isLoading, events]);
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white rounded-lg shadow-xl shadow-gray-200/50 h-full flex flex-col border border-gray-200", children: [
@@ -24856,9 +24890,9 @@
         ] }),
         !isLoading && events.length > 0 && viewMode === "all" && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(ScoreDisplay, { score: kidFriendlyScore }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(EventList, { events, onCardClick })
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(EventList, { events, onCardClick, expandedTimestamp, onExpand: setExpandedTimestamp })
         ] }),
-        !isLoading && events.length > 0 && viewMode === "current" && (activeDetections.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(EventList, { events: activeDetections, onCardClick }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col items-center justify-center h-full text-gray-400 text-center", children: [
+        !isLoading && events.length > 0 && viewMode === "current" && (activeDetections.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(EventList, { events: activeDetections, onCardClick, expandedTimestamp, onExpand: setExpandedTimestamp }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col items-center justify-center h-full text-gray-400 text-center", children: [
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "font-semibold", children: "No Active Events" }),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "text-sm mt-2", children: "Nothing detected at the current timestamp." })
         ] }))
@@ -25115,7 +25149,7 @@
   // App.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var App = () => {
-    const [youtubeUrl, setYoutubeUrl] = (0, import_react5.useState)("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+    const [youtubeUrl, setYoutubeUrl] = (0, import_react5.useState)("");
     const [videoId, setVideoId] = (0, import_react5.useState)(null);
     const [videoTitle, setVideoTitle] = (0, import_react5.useState)("");
     const [isLoading, setIsLoading] = (0, import_react5.useState)(false);
@@ -25295,7 +25329,8 @@
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "text-gray-600", children: "Enter a YouTube URL to begin analysis." }),
             error && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "mt-4 text-red-600 bg-red-100 px-4 py-2 rounded-md", children: error })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(MonsterDetector, { activeDetections })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(MonsterDetector, { activeDetections }),
+          history.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(HistoryPanel, { history, onItemClick: handleHistoryClick })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "lg:col-span-1", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
           ContextualInfoPanel,
@@ -25315,8 +25350,7 @@
           indexedVideos,
           onVideoClick: handleIndexVideoClick
         }
-      ) }),
-      history.length > 0 && !showIndexPanel && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(HistoryPanel, { history, onItemClick: handleHistoryClick })
+      ) })
     ] }) });
   };
   var App_default = App;

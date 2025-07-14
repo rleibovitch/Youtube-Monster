@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { videoIndexService } from '../services/videoIndexService';
 import type { HistoryItem } from '../types';
+import { LeaderboardPage } from './LeaderboardPage';
 
 interface RouterProps {
     children: React.ReactNode;
@@ -9,13 +10,19 @@ interface RouterProps {
 
 export const Router: React.FC<RouterProps> = ({ children, onVideoLoad }) => {
     const [isLoading, setIsLoading] = useState(true);
+    const [isLeaderboard, setIsLeaderboard] = useState(false);
 
     useEffect(() => {
         // Load indexed videos from storage
         videoIndexService.loadFromStorage();
         
-        // Check if we're on a video page
+        // Check if we're on a video page or leaderboard
         const path = window.location.pathname;
+        if (path === '/leaderboard') {
+            setIsLeaderboard(true);
+            setIsLoading(false);
+            return;
+        }
         const videoMatch = path.match(/^\/video\/([^\/]+)$/);
         
         if (videoMatch) {
@@ -39,6 +46,10 @@ export const Router: React.FC<RouterProps> = ({ children, onVideoLoad }) => {
                 <div className="text-gray-400">Loading...</div>
             </div>
         );
+    }
+
+    if (isLeaderboard) {
+        return <LeaderboardPage />;
     }
 
     return <>{children}</>;

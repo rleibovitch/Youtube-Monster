@@ -207,6 +207,12 @@ const App: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-4">
                         <button
+                            onClick={() => window.location.pathname = '/leaderboard'}
+                            className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md text-sm transition-colors font-semibold"
+                        >
+                            Leaderboard
+                        </button>
+                        <button
                             onClick={() => setShowIndexPanel(!showIndexPanel)}
                             className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors"
                         >
@@ -234,6 +240,9 @@ const App: React.FC = () => {
                             )}
                         </div>
                         <MonsterDetector activeDetections={activeDetections} />
+                        {history.length > 0 && (
+                            <HistoryPanel history={history} onItemClick={handleHistoryClick} />
+                        )}
                     </div>
                     
                     <div className="lg:col-span-1">
@@ -255,10 +264,6 @@ const App: React.FC = () => {
                             onVideoClick={handleIndexVideoClick} 
                         />
                     </div>
-                )}
-
-                {history.length > 0 && !showIndexPanel && (
-                    <HistoryPanel history={history} onItemClick={handleHistoryClick} />
                 )}
             </div>
         </Router>

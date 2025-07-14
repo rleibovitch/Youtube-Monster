@@ -59,7 +59,7 @@ export const MonsterDetector: React.FC<MonsterDetectorProps> = ({ activeDetectio
 
     return (
         <div className="bg-white rounded-lg p-4 shadow-xl shadow-gray-200/50 border border-gray-200">
-            <h2 className="text-xl font-bold mb-4 text-center text-red-400">MONSTER DETECTOR ACTIVE</h2>
+            <h2 className="text-xl font-bold mb-4 text-center text-red-400">Sentiment Analysis</h2>
             <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
                 <CategorySection
                     title="Negative Speech"

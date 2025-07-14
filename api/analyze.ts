@@ -53,7 +53,7 @@ export default async function handler(
     return res.status(500).json({ error: "Server configuration error: API key is missing." });
   }
   
-  const { videoTopic, sensitivity } = req.body;
+  const { videoTopic, sensitivity, videoDuration } = req.body;
   if (!videoTopic) {
     return res.status(400).json({ error: "Missing 'videoTopic' in request body." });
   }
@@ -63,6 +63,11 @@ export default async function handler(
   if (typeof sensitivity === 'number' && sensitivity >= 1 && sensitivity <= 10) {
     sensitivityIndex = Math.round(sensitivity);
   }
+
+  // Use actual video duration if provided, otherwise default to 450 seconds
+  const maxTimestamp = (typeof videoDuration === 'number' && videoDuration > 10)
+    ? Math.floor(videoDuration)
+    : 450;
 
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -74,7 +79,7 @@ The sensitivity index is ${sensitivityIndex} (1=least sensitive, 10=most sensiti
 Your output MUST be a valid JSON array of objects. Each object represents a detected negative event and must adhere to the following schema:
 
 {
-  "timestamp": number,      // Time in seconds (e.g., 45.5). Must be between 10 and 450.
+  "timestamp": number,      // Time in seconds (e.g., 45.5). Must be between 10 and ${maxTimestamp}.
   "category": "Negative Speech" | "Negative Behavior" | "Potential Emotions",
   "subCategory": string,      // Must be one of the predefined sub-categories below.
   "description": string,      // A brief, neutral, one-sentence description (under 15 words).
@@ -101,7 +106,7 @@ Here is an example of a valid response format:
 1.  **JSON ONLY:** Your entire output must be ONLY the JSON array. Do NOT include any introductory text, comments, explanations, or markdown fences (like \`\`\`json).
 2.  **VALID JSON:** Ensure the JSON is perfectly valid. Pay close attention to commas (no trailing commas) and correctly escaped double quotes within strings.
 3.  **QUANTITY:** Generate between 8 and 15 event objects.
-4.  **TIMESTAMPS:** Timestamps must be in increasing order.
+4.  **TIMESTAMPS:** Timestamps must be in increasing order and between 10 and ${maxTimestamp}.
 `;
 
     let responseText = '';

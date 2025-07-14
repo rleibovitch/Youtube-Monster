@@ -1,13 +1,13 @@
 import type { AnalysisEvent } from '../types';
 
-export const generateAnalysis = async (videoTopic: string): Promise<AnalysisEvent[]> => {
+export const generateAnalysis = async (videoTopic: string, videoDuration?: number): Promise<AnalysisEvent[]> => {
     try {
         const response = await fetch('/api/analyze', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ videoTopic }),
+            body: JSON.stringify({ videoTopic, videoDuration }),
         });
 
         if (!response.ok) {

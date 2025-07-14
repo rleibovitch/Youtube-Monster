@@ -84,7 +84,8 @@ const App: React.FC = () => {
         }
 
         try {
-            const events = await generateAnalysis('a heated online debate or argument');
+            // If videoDuration is available, pass it; otherwise, skip
+            const events = await generateAnalysis('a heated online debate or argument', videoDuration || undefined);
             setAnalysisEvents(events.sort((a, b) => a.timestamp - b.timestamp));
             setVideoId(extractedId);
             updateUrl(extractedId);

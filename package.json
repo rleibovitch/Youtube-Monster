@@ -9,7 +9,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run build && npx serve public -p 3000",
-    "dev:watch": "npm run build && npx serve public -p 3000",
+    "dev:api": "vercel dev",
     "build": "esbuild index.tsx --bundle --outfile=public/bundle.js --jsx=transform && copyfiles -f index.html public",
     "deploy": "vercel --prod"
   },

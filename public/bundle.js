@@ -24465,11 +24465,11 @@
               return jsxWithValidation(type, props, key, false);
             }
           }
-          var jsx11 = jsxWithValidationDynamic;
-          var jsxs8 = jsxWithValidationStatic;
+          var jsx12 = jsxWithValidationDynamic;
+          var jsxs9 = jsxWithValidationStatic;
           exports.Fragment = REACT_FRAGMENT_TYPE;
-          exports.jsx = jsx11;
-          exports.jsxs = jsxs8;
+          exports.jsx = jsx12;
+          exports.jsxs = jsxs9;
         })();
       }
     }
@@ -25091,13 +25091,65 @@
     }
   };
 
-  // components/Router.tsx
+  // components/LeaderboardPage.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var LeaderboardPage = () => {
+    const videos = videoIndexService.getAllVideos().slice().sort((a, b) => {
+      if (a.kidFriendlyScore === b.kidFriendlyScore) return 0;
+      if (a.kidFriendlyScore === Infinity) return -1;
+      if (b.kidFriendlyScore === Infinity) return 1;
+      return (b.kidFriendlyScore || 0) - (a.kidFriendlyScore || 0);
+    });
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "min-h-screen bg-gray-50 p-8", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "max-w-4xl mx-auto", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h2", { className: "text-2xl font-bold mb-6 text-gray-900", children: "Leaderboard" }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("table", { className: "min-w-full bg-white rounded-lg shadow overflow-hidden", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("tr", { className: "bg-gray-100 text-left", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { className: "px-4 py-2", children: "Video Title" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { className: "px-4 py-2", children: "Monster Score" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { className: "px-4 py-2", children: "Violations" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { className: "px-4 py-2", children: "View" })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("tbody", { children: [
+          videos.map((video) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("tr", { className: "border-t border-gray-200 hover:bg-gray-50", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "px-4 py-2 font-medium text-gray-800 truncate max-w-xs", children: video.videoTitle }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "px-4 py-2 text-gray-700", children: video.kidFriendlyScore === Infinity ? "Perfect" : video.kidFriendlyScore || "N/A" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "px-4 py-2 text-gray-700", children: video.analysisEvents.length }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "px-4 py-2", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+              "a",
+              {
+                href: `/video/${video.videoId}`,
+                className: "text-blue-600 hover:underline",
+                children: "View Analysis"
+              }
+            ) })
+          ] }, video.videoId)),
+          videos.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { colSpan: 4, className: "px-4 py-8 text-center text-gray-400", children: "No videos analyzed yet." }) })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "mt-6", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+        "button",
+        {
+          onClick: () => window.location.pathname = "/",
+          className: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors",
+          children: "Back to Home"
+        }
+      ) })
+    ] }) });
+  };
+
+  // components/Router.tsx
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var Router = ({ children, onVideoLoad }) => {
     const [isLoading, setIsLoading] = (0, import_react4.useState)(true);
+    const [isLeaderboard, setIsLeaderboard] = (0, import_react4.useState)(false);
     (0, import_react4.useEffect)(() => {
       videoIndexService.loadFromStorage();
       const path = window.location.pathname;
+      if (path === "/leaderboard") {
+        setIsLeaderboard(true);
+        setIsLoading(false);
+        return;
+      }
       const videoMatch = path.match(/^\/video\/([^\/]+)$/);
       if (videoMatch) {
         const videoId = videoMatch[1];
@@ -25111,20 +25163,23 @@
       setIsLoading(false);
     }, [onVideoLoad]);
     if (isLoading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "min-h-screen flex items-center justify-center bg-gray-900", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "text-gray-400", children: "Loading..." }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "min-h-screen flex items-center justify-center bg-gray-900", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "text-gray-400", children: "Loading..." }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_jsx_runtime8.Fragment, { children });
+    if (isLeaderboard) {
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(LeaderboardPage, {});
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_jsx_runtime9.Fragment, { children });
   };
 
   // services/geminiService.ts
-  var generateAnalysis = async (videoTopic) => {
+  var generateAnalysis = async (videoTopic, videoDuration, videoId) => {
     try {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ videoTopic })
+        body: JSON.stringify({ videoTopic, videoDuration, videoId })
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -25147,7 +25202,7 @@
   };
 
   // App.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var App = () => {
     const [youtubeUrl, setYoutubeUrl] = (0, import_react5.useState)("");
     const [videoId, setVideoId] = (0, import_react5.useState)(null);
@@ -25208,7 +25263,7 @@
         return;
       }
       try {
-        const events = await generateAnalysis("a heated online debate or argument");
+        const events = await generateAnalysis("a heated online debate or argument", videoDuration || void 0, extractedId);
         setAnalysisEvents(events.sort((a, b) => a.timestamp - b.timestamp));
         setVideoId(extractedId);
         updateUrl(extractedId);
@@ -25297,14 +25352,33 @@
     (0, import_react5.useEffect)(() => {
       refreshIndexedVideos();
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Router, { onVideoLoad: handleVideoLoad, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "min-h-screen flex flex-col bg-gray-50", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("header", { className: "px-4 py-3 border-b border-gray-200 flex items-center justify-between", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(LogoIcon, {}),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h1", { className: "text-xl font-bold text-gray-900", children: "YouTube Monster Scanner" })
+    (0, import_react5.useEffect)(() => {
+      if (history.length > 0 && !videoId) {
+        let minVideo = history[0];
+        for (const vid of history) {
+          if (vid.kidFriendlyScore !== Infinity && (minVideo.kidFriendlyScore === Infinity || (vid.kidFriendlyScore || 0) < (minVideo.kidFriendlyScore || 0)) || vid.kidFriendlyScore === Infinity && minVideo.kidFriendlyScore === Infinity) {
+            minVideo = vid;
+          }
+        }
+        handleHistoryClick(minVideo);
+      }
+    }, [history, videoId]);
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Router, { onVideoLoad: handleVideoLoad, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "min-h-screen flex flex-col bg-gray-50", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("header", { className: "px-4 py-3 border-b border-gray-200 flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(LogoIcon, {}),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h1", { className: "text-xl font-bold text-gray-900", children: "YouTube Monster Scanner" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "flex items-center gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "button",
+            {
+              onClick: () => window.location.pathname = "/leaderboard",
+              className: "px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md text-sm transition-colors font-semibold",
+              children: "Leaderboard"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "button",
             {
               onClick: () => setShowIndexPanel(!showIndexPanel),
@@ -25312,12 +25386,12 @@
               children: showIndexPanel ? "Hide Index" : "Show Index"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(UrlInputForm, { onSubmit: handleAnalyze, isLoading, initialUrl: youtubeUrl })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(UrlInputForm, { onSubmit: handleAnalyze, isLoading, initialUrl: youtubeUrl })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("main", { className: "flex-grow grid grid-cols-1 lg:grid-cols-3 gap-4 p-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "lg:col-span-2 flex flex-col gap-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "flex-grow aspect-video bg-black rounded-lg overflow-hidden shadow-2xl shadow-black/50", children: videoId ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("main", { className: "flex-grow grid grid-cols-1 lg:grid-cols-3 gap-4 p-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "lg:col-span-2 flex flex-col gap-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "flex-grow aspect-video bg-black rounded-lg overflow-hidden shadow-2xl shadow-black/50", children: videoId ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             YouTubePlayer,
             {
               videoId,
@@ -25325,14 +25399,14 @@
               onTimeUpdate: handleTimeUpdate,
               onDurationChange: handleDurationChange
             }
-          ) : /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "w-full h-full flex flex-col items-center justify-center bg-gray-100", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "text-gray-600", children: "Enter a YouTube URL to begin analysis." }),
-            error && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "mt-4 text-red-600 bg-red-100 px-4 py-2 rounded-md", children: error })
+          ) : /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "w-full h-full flex flex-col items-center justify-center bg-gray-100", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "text-gray-600", children: "Enter a YouTube URL to begin analysis." }),
+            error && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "mt-4 text-red-600 bg-red-100 px-4 py-2 rounded-md", children: error })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(MonsterDetector, { activeDetections }),
-          history.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(HistoryPanel, { history, onItemClick: handleHistoryClick })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(MonsterDetector, { activeDetections }),
+          history.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(HistoryPanel, { history, onItemClick: handleHistoryClick })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "lg:col-span-1", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "lg:col-span-1", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
           ContextualInfoPanel,
           {
             events: analysisEvents,
@@ -25344,7 +25418,7 @@
           }
         ) })
       ] }),
-      showIndexPanel && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "border-t border-gray-200 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+      showIndexPanel && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "border-t border-gray-200 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         VideoIndexPanel,
         {
           indexedVideos,
@@ -25356,14 +25430,14 @@
   var App_default = App;
 
   // index.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var rootElement = document.getElementById("root");
   if (!rootElement) {
     throw new Error("Could not find root element to mount to");
   }
   var root = import_client.default.createRoot(rootElement);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(App_default, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(App_default, {}) })
   );
 })();
 /*! Bundled license information:

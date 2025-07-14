@@ -197,6 +197,24 @@ const App: React.FC = () => {
         refreshIndexedVideos();
     }, []);
 
+    // On mount, auto-load the video with the lowest monster score (excluding Infinity if possible)
+    useEffect(() => {
+        if (history.length > 0 && !videoId) {
+            // Find the video with the lowest kidFriendlyScore (excluding Infinity if possible)
+            let minVideo = history[0];
+            for (const vid of history) {
+                if (
+                    (vid.kidFriendlyScore !== Infinity &&
+                        (minVideo.kidFriendlyScore === Infinity || (vid.kidFriendlyScore || 0) < (minVideo.kidFriendlyScore || 0))) ||
+                    (vid.kidFriendlyScore === Infinity && minVideo.kidFriendlyScore === Infinity)
+                ) {
+                    minVideo = vid;
+                }
+            }
+            handleHistoryClick(minVideo);
+        }
+    }, [history, videoId]);
+
     return (
         <Router onVideoLoad={handleVideoLoad}>
             <div className="min-h-screen flex flex-col bg-gray-50">

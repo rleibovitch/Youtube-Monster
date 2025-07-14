@@ -9,6 +9,7 @@ export interface AnalysisEvent {
   category: NegativeCategory;
   subCategory: string;
   description: string;
+  phrase: string; // The quoted phrase or utterance
 }
 
 export interface HistoryItem {

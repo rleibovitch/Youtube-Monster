@@ -55,32 +55,65 @@ const ScoreDisplay: React.FC<{ score: number | null }> = ({ score }) => {
     );
 };
 
-const EventList: React.FC<{ events: AnalysisEvent[]; onCardClick: (timestamp: number) => void; }> = ({ events, onCardClick }) => (
+const EventList: React.FC<{ events: AnalysisEvent[]; onCardClick: (timestamp: number) => void; expandedTimestamp?: number | null; onExpand?: (timestamp: number) => void; }> = ({ events, onCardClick, expandedTimestamp, onExpand }) => (
     <ul className="space-y-3">
-        {events.map((event, index) => (
-            <li
-                key={index}
-                onClick={() => onCardClick(event.timestamp)}
-                className="bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-all border-l-4 border border-gray-200"
-                style={{ borderColor: getCategoryColor(event.category) }}
-            >
-                <div className="flex justify-between items-center">
-                    <span className="font-bold text-sm text-gray-800">{event.subCategory}</span>
-                    <span className="text-xs font-mono bg-gray-200 px-2 py-1 rounded">{formatTimestamp(event.timestamp)}</span>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">{event.description}</p>
-            </li>
-        ))}
+        {events.map((event, index) => {
+            const isExpanded = expandedTimestamp === event.timestamp;
+            return (
+                <li
+                    key={index}
+                    onClick={() => {
+                        if (onExpand) onExpand(isExpanded ? null : event.timestamp);
+                        onCardClick(event.timestamp);
+                    }}
+                    className={`bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-all border-l-4 border border-gray-200 ${isExpanded ? 'ring-2 ring-blue-200' : ''}`}
+                    style={{ borderColor: getCategoryColor(event.category) }}
+                >
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-sm text-gray-800">{event.subCategory}</span>
+                        <span className="text-xs font-mono bg-gray-200 px-2 py-1 rounded">{formatTimestamp(event.timestamp)}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">{event.description}</p>
+                    {isExpanded && (
+                        <div className="mt-3 p-3 bg-gray-100 rounded">
+                            <div className="mb-2">
+                                <span className="font-semibold text-gray-700">Phrase:</span>
+                                <span className="ml-2 italic text-gray-800">"{event.phrase || 'No phrase available.'}"</span>
+                            </div>
+                            <div>
+                                <span className="font-semibold text-gray-700">Executive Summary:</span>
+                                <span className="ml-2 text-gray-700">{generateExecutiveSummary(event)}</span>
+                            </div>
+                        </div>
+                    )}
+                </li>
+            );
+        })}
     </ul>
 );
 
+function generateExecutiveSummary(event: AnalysisEvent): string {
+    switch (event.category) {
+        case NegativeCategory.SPEECH:
+            return `Flagged for negative speech (${event.subCategory}): ${event.description}`;
+        case NegativeCategory.BEHAVIOR:
+            return `Flagged for negative behavior (${event.subCategory}): ${event.description}`;
+        case NegativeCategory.POTENTIAL_EMOTIONS:
+            return `Flagged for potential negative emotion (${event.subCategory}): ${event.description}`;
+        default:
+            return event.description;
+    }
+}
+
 export const ContextualInfoPanel: React.FC<ContextualInfoPanelProps> = ({ events, activeDetections, onCardClick, videoTitle, isLoading, kidFriendlyScore }) => {
     const [viewMode, setViewMode] = useState<'all' | 'current'>('all');
+    const [expandedTimestamp, setExpandedTimestamp] = useState<number | null>(null);
     
     useEffect(() => {
         // Reset to 'all' view when a new analysis starts
         if (isLoading || events.length === 0) {
             setViewMode('all');
+            setExpandedTimestamp(null);
         }
     }, [isLoading, events]);
 
@@ -119,12 +152,12 @@ export const ContextualInfoPanel: React.FC<ContextualInfoPanelProps> = ({ events
                 {!isLoading && events.length > 0 && viewMode === 'all' && (
                     <>
                         <ScoreDisplay score={kidFriendlyScore} />
-                        <EventList events={events} onCardClick={onCardClick} />
+                        <EventList events={events} onCardClick={onCardClick} expandedTimestamp={expandedTimestamp} onExpand={setExpandedTimestamp} />
                     </>
                 )}
                 {!isLoading && events.length > 0 && viewMode === 'current' && (
                     activeDetections.length > 0 ? (
-                        <EventList events={activeDetections} onCardClick={onCardClick} />
+                        <EventList events={activeDetections} onCardClick={onCardClick} expandedTimestamp={expandedTimestamp} onExpand={setExpandedTimestamp} />
                     ) : (
                         <div className="flex flex-col items-center justify-center h-full text-gray-400 text-center">
                             <p className="font-semibold">No Active Events</p>

@@ -13,7 +13,7 @@ import { LogoIcon } from './components/icons';
 import { EVENT_PENALTIES } from './constants';
 
 const App: React.FC = () => {
-    const [youtubeUrl, setYoutubeUrl] = useState<string>('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+    const [youtubeUrl, setYoutubeUrl] = useState<string>('');
     const [videoId, setVideoId] = useState<string | null>(null);
     const [videoTitle, setVideoTitle] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);

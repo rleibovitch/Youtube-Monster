@@ -53,9 +53,15 @@ export default async function handler(
     return res.status(500).json({ error: "Server configuration error: API key is missing." });
   }
   
-  const { videoTopic } = req.body;
+  const { videoTopic, sensitivity } = req.body;
   if (!videoTopic) {
     return res.status(400).json({ error: "Missing 'videoTopic' in request body." });
+  }
+
+  // Sensitivity index: 1 (least sensitive) to 10 (most sensitive), default 5
+  let sensitivityIndex = 5;
+  if (typeof sensitivity === 'number' && sensitivity >= 1 && sensitivity <= 10) {
+    sensitivityIndex = Math.round(sensitivity);
   }
 
   try {
@@ -63,13 +69,16 @@ export default async function handler(
     const prompt = `
 You are an expert AI content analysis engine. Your task is to generate a mock analysis for a hypothetical YouTube video about "${videoTopic}".
 
+The sensitivity index is ${sensitivityIndex} (1=least sensitive, 10=most sensitive, 5=medium). Judge as if Carl Jung were a parent. The higher the sensitivity, the more likely you are to flag subtle or borderline content as negative; the lower the sensitivity, the more tolerant you are of ambiguity or mild negativity.
+
 Your output MUST be a valid JSON array of objects. Each object represents a detected negative event and must adhere to the following schema:
 
 {
   "timestamp": number,      // Time in seconds (e.g., 45.5). Must be between 10 and 450.
   "category": "Negative Speech" | "Negative Behavior" | "Potential Emotions",
   "subCategory": string,      // Must be one of the predefined sub-categories below.
-  "description": string      // A brief, neutral, one-sentence description (under 15 words).
+  "description": string,      // A brief, neutral, one-sentence description (under 15 words).
+  "phrase": string           // The quoted phrase or utterance that triggered the flag.
 }
 
 Here is an example of a valid response format:
@@ -78,7 +87,8 @@ Here is an example of a valid response format:
     "timestamp": 25,
     "category": "Negative Speech",
     "subCategory": "Hostility",
-    "description": "The speaker aggressively insults the opponent's viewpoint."
+    "description": "The speaker aggressively insults the opponent's viewpoint.",
+    "phrase": "You're an idiot for thinking that."
   }
 ]
 

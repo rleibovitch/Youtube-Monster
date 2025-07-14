@@ -323,18 +323,26 @@ export default async function handler(
 
   // Test 2: Try to list available transcripts
   try {
-    const availableTranscripts = await YoutubeTranscript.listTranscripts(videoId);
-    results.tests.push({
-      test: 'youtube-transcript - List Transcripts',
-      success: true,
-      details: {
-        transcriptCount: availableTranscripts.length,
-        transcripts: availableTranscripts.map((t: any) => ({
-          language: t.language,
-          languageCode: t.languageCode
-        }))
-      }
-    });
+    if (typeof YoutubeTranscript.listTranscripts === 'function') {
+      const availableTranscripts = await YoutubeTranscript.listTranscripts(videoId);
+      results.tests.push({
+        test: 'youtube-transcript - List Transcripts',
+        success: true,
+        details: {
+          transcriptCount: availableTranscripts.length,
+          transcripts: availableTranscripts.map((t: any) => ({
+            language: t.language,
+            languageCode: t.languageCode
+          }))
+        }
+      });
+    } else {
+      results.tests.push({
+        test: 'youtube-transcript - List Transcripts',
+        success: false,
+        error: 'listTranscripts method not available in this version'
+      });
+    }
   } catch (err: any) {
     results.tests.push({
       test: 'youtube-transcript - List Transcripts',

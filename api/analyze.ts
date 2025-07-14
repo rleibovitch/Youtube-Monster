@@ -74,15 +74,20 @@ async function fetchTranscriptWithFallbacks(videoId: string) {
   // Method 3: Try to get available transcripts first
   try {
     console.log(`Attempting to list available transcripts for video ${videoId}...`);
-    const availableTranscripts = await YoutubeTranscript.listTranscripts(videoId);
-    console.log(`Available transcripts:`, availableTranscripts);
-    
-    if (availableTranscripts.length > 0) {
-      // Try the first available transcript
-      const firstTranscript = availableTranscripts[0];
-      transcript = await firstTranscript.fetch();
-      console.log(`Successfully fetched transcript with ${transcript.length} segments using first available transcript`);
-      return { transcript, error: null };
+    // Check if listTranscripts method exists, if not skip this method
+    if (typeof YoutubeTranscript.listTranscripts === 'function') {
+      const availableTranscripts = await YoutubeTranscript.listTranscripts(videoId);
+      console.log(`Available transcripts:`, availableTranscripts);
+      
+      if (availableTranscripts.length > 0) {
+        // Try the first available transcript
+        const firstTranscript = availableTranscripts[0];
+        transcript = await firstTranscript.fetch();
+        console.log(`Successfully fetched transcript with ${transcript.length} segments using first available transcript`);
+        return { transcript, error: null };
+      }
+    } else {
+      console.log(`listTranscripts method not available, skipping this method`);
     }
   } catch (err: any) {
     errorMessage = `${errorMessage}\nListing transcripts failed: ${err.message}`;
@@ -139,8 +144,13 @@ async function fetchTranscriptWithFallbacks(videoId: string) {
     `1. Video has no captions/transcripts enabled\n` +
     `2. Video is private or restricted\n` +
     `3. Video ID is invalid\n` +
-    `4. YouTube API restrictions\n\n` +
-    `Technical details:\n${errorMessage}`;
+    `4. YouTube API restrictions\n` +
+    `5. Transcripts are disabled by the video creator\n\n` +
+    `Technical details:\n${errorMessage}\n\n` +
+    `Suggestions:\n` +
+    `- Try a different video with enabled captions\n` +
+    `- Check if the video has auto-generated captions\n` +
+    `- Some videos may have transcripts available in the description or comments`;
 
   return { transcript: null, error: finalError };
 }
@@ -209,6 +219,66 @@ async function scrapeTranscriptFromYouTubePage(videoId: string) {
         }
       } catch (err) {
         console.log(`Failed to parse captions data: ${err.message}`);
+      }
+    }
+
+    // Method 4: Try to find any transcript-related data in the page
+    const transcriptPatterns = [
+      /"transcriptRenderer":\s*({[^}]+})/g,
+      /"transcript":\s*({[^}]+})/g,
+      /"captions":\s*({[^}]+})/g,
+      /"subtitleTracks":\s*({[^}]+})/g,
+      /"captionTracks":\s*({[^}]+})/g
+    ];
+
+    for (const pattern of transcriptPatterns) {
+      const matches = html.match(pattern);
+      if (matches) {
+        for (const match of matches) {
+          try {
+            const data = JSON.parse(match);
+            const transcript = parseTranscriptRenderer(data);
+            if (transcript.length > 0) {
+              return transcript;
+            }
+          } catch (err) {
+            // Continue to next match
+          }
+        }
+      }
+    }
+
+    // Method 5: Try to extract from player response data
+    const playerResponseMatch = html.match(/"playerResponse":\s*"([^"]+)"/);
+    if (playerResponseMatch) {
+      try {
+        const playerResponseJson = decodeURIComponent(playerResponseMatch[1].replace(/\\"/g, '"'));
+        const playerResponse = JSON.parse(playerResponseJson);
+        const transcript = extractTranscriptFromPlayerResponse(playerResponse);
+        if (transcript && transcript.length > 0) {
+          return transcript;
+        }
+      } catch (err) {
+        console.log(`Failed to parse player response: ${err.message}`);
+      }
+    }
+
+    // Method 6: Try to find caption URLs directly
+    const captionUrlMatches = html.match(/"baseUrl":"([^"]*caption[^"]*)"/g);
+    if (captionUrlMatches) {
+      for (const match of captionUrlMatches) {
+        try {
+          const urlMatch = match.match(/"baseUrl":"([^"]*)"/);
+          if (urlMatch) {
+            const captionUrl = urlMatch[1].replace(/\\u002F/g, '/');
+            const transcript = await fetchCaptionTrack(captionUrl);
+            if (transcript && transcript.length > 0) {
+              return transcript;
+            }
+          }
+        } catch (err) {
+          // Continue to next URL
+        }
       }
     }
 
@@ -350,6 +420,38 @@ function extractTranscriptFromCaptions(captionsData: any): any[] {
     return [];
   } catch (err) {
     console.log(`Failed to extract from captions: ${err.message}`);
+    return [];
+  }
+}
+
+// Extract transcript from player response data
+function extractTranscriptFromPlayerResponse(playerResponse: any): any[] {
+  try {
+    // Try multiple paths in player response
+    const paths = [
+      playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks,
+      playerResponse?.captions?.playerCaptionsRenderer?.captionTracks,
+      playerResponse?.captions?.captionTracks,
+      playerResponse?.subtitleTracks,
+      playerResponse?.captionTracks
+    ];
+
+    for (const tracks of paths) {
+      if (tracks && tracks.length > 0) {
+        // Try to fetch the first available track
+        return fetchCaptionTrack(tracks[0].baseUrl);
+      }
+    }
+
+    // Try to find transcript in other parts of player response
+    const transcriptRenderer = findTranscriptRenderer(playerResponse);
+    if (transcriptRenderer) {
+      return parseTranscriptRenderer(transcriptRenderer);
+    }
+
+    return [];
+  } catch (err) {
+    console.log(`Failed to extract from player response: ${err.message}`);
     return [];
   }
 }

@@ -1,6 +1,244 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { YoutubeTranscript } from 'youtube-transcript';
 
+// Web scraping fallback method (copied from analyze.ts)
+async function scrapeTranscriptFromYouTubePage(videoId: string) {
+  try {
+    console.log(`Scraping transcript from YouTube page for video ${videoId}...`);
+    
+    // Fetch the YouTube page
+    const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const html = await response.text();
+    
+    // Method 1: Try to extract transcript from ytInitialData
+    const ytInitialDataMatch = html.match(/var ytInitialData = ({.+?});/);
+    if (ytInitialDataMatch) {
+      try {
+        const ytInitialData = JSON.parse(ytInitialDataMatch[1]);
+        const transcript = extractTranscriptFromYtInitialData(ytInitialData);
+        if (transcript && transcript.length > 0) {
+          return transcript;
+        }
+      } catch (err) {
+        console.log(`Failed to parse ytInitialData: ${err.message}`);
+      }
+    }
+
+    // Method 2: Try to extract from inline script tags
+    const scriptMatches = html.match(/<script[^>]*>([\s\S]*?)<\/script>/g);
+    if (scriptMatches) {
+      for (const script of scriptMatches) {
+        try {
+          // Look for transcript data in script content
+          const transcriptData = extractTranscriptFromScript(script);
+          if (transcriptData && transcriptData.length > 0) {
+            return transcriptData;
+          }
+        } catch (err) {
+          // Continue to next script
+        }
+      }
+    }
+
+    // Method 3: Try to extract from captions track
+    const captionsMatch = html.match(/"captions":\s*({[^}]+})/);
+    if (captionsMatch) {
+      try {
+        const captionsData = JSON.parse(captionsMatch[1]);
+        const transcript = extractTranscriptFromCaptions(captionsData);
+        if (transcript && transcript.length > 0) {
+          return transcript;
+        }
+      } catch (err) {
+        console.log(`Failed to parse captions data: ${err.message}`);
+      }
+    }
+
+    throw new Error('No transcript data found in page source');
+  } catch (err: any) {
+    console.error(`Web scraping failed: ${err.message}`);
+    throw err;
+  }
+}
+
+// Helper functions for web scraping
+function extractTranscriptFromYtInitialData(data: any): any[] {
+  try {
+    const transcriptRenderer = findTranscriptRenderer(data);
+    if (transcriptRenderer) {
+      return parseTranscriptRenderer(transcriptRenderer);
+    }
+    return [];
+  } catch (err) {
+    console.log(`Failed to extract from ytInitialData: ${err.message}`);
+    return [];
+  }
+}
+
+function findTranscriptRenderer(data: any): any {
+  const searchInObject = (obj: any, depth = 0): any => {
+    if (depth > 10) return null;
+    
+    if (obj && typeof obj === 'object') {
+      if (obj.transcriptRenderer) {
+        return obj.transcriptRenderer;
+      }
+      
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const result = searchInObject(obj[key], depth + 1);
+          if (result) return result;
+        }
+      }
+    }
+    
+    return null;
+  };
+  
+  return searchInObject(data);
+}
+
+function parseTranscriptRenderer(renderer: any): any[] {
+  try {
+    const body = renderer?.body?.transcriptBodyRenderer?.cueGroups;
+    if (!body) return [];
+    
+    const transcript = [];
+    for (const cueGroup of body) {
+      const cues = cueGroup?.transcriptCueGroupRenderer?.cues;
+      if (cues) {
+        for (const cue of cues) {
+          const cueRenderer = cue?.transcriptCueRenderer;
+          if (cueRenderer) {
+            const text = cueRenderer?.cue?.simpleText;
+            const startMs = cueRenderer?.startOffsetMs;
+            const durationMs = cueRenderer?.durationMs;
+            
+            if (text && startMs !== undefined) {
+              transcript.push({
+                text: text.trim(),
+                offset: parseInt(startMs),
+                duration: durationMs ? parseInt(durationMs) : 5000
+              });
+            }
+          }
+        }
+      }
+    }
+    
+    return transcript;
+  } catch (err) {
+    console.log(`Failed to parse transcript renderer: ${err.message}`);
+    return [];
+  }
+}
+
+function extractTranscriptFromScript(scriptContent: string): any[] {
+  try {
+    const patterns = [
+      /"transcriptRenderer":\s*({[^}]+})/g,
+      /"captions":\s*({[^}]+})/g,
+      /"transcript":\s*({[^}]+})/g
+    ];
+    
+    for (const pattern of patterns) {
+      const matches = scriptContent.match(pattern);
+      if (matches) {
+        for (const match of matches) {
+          try {
+            const data = JSON.parse(match);
+            const transcript = parseTranscriptRenderer(data);
+            if (transcript.length > 0) {
+              return transcript;
+            }
+          } catch (err) {
+            // Continue to next match
+          }
+        }
+      }
+    }
+    
+    return [];
+  } catch (err) {
+    console.log(`Failed to extract from script: ${err.message}`);
+    return [];
+  }
+}
+
+function extractTranscriptFromCaptions(captionsData: any): any[] {
+  try {
+    const tracks = captionsData?.playerCaptionsTracklistRenderer?.captionTracks;
+    if (tracks && tracks.length > 0) {
+      return fetchCaptionTrack(tracks[0].baseUrl);
+    }
+    return [];
+  } catch (err) {
+    console.log(`Failed to extract from captions: ${err.message}`);
+    return [];
+  }
+}
+
+async function fetchCaptionTrack(baseUrl: string): Promise<any[]> {
+  try {
+    const response = await fetch(baseUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch caption track: ${response.status}`);
+    }
+    
+    const xml = await response.text();
+    return parseCaptionXML(xml);
+  } catch (err) {
+    console.log(`Failed to fetch caption track: ${err.message}`);
+    return [];
+  }
+}
+
+function parseCaptionXML(xml: string): any[] {
+  try {
+    const transcript = [];
+    const textMatches = xml.match(/<text[^>]*dur="([^"]*)"[^>]*start="([^"]*)"[^>]*>([^<]*)<\/text>/g);
+    
+    if (textMatches) {
+      for (const match of textMatches) {
+        const durMatch = match.match(/dur="([^"]*)"/);
+        const startMatch = match.match(/start="([^"]*)"/);
+        const textMatch = match.match(/>([^<]*)</);
+        
+        if (durMatch && startMatch && textMatch) {
+          const duration = parseFloat(durMatch[1]) * 1000;
+          const start = parseFloat(startMatch[1]) * 1000;
+          const text = textMatch[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+          
+          transcript.push({
+            text: text.trim(),
+            offset: Math.round(start),
+            duration: Math.round(duration)
+          });
+        }
+      }
+    }
+    
+    return transcript;
+  } catch (err) {
+    console.log(`Failed to parse caption XML: ${err.message}`);
+    return [];
+  }
+}
+
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse,
@@ -153,6 +391,34 @@ export default async function handler(
         error: err.message
       });
     }
+  }
+
+  // Test 5: Web scraping fallback
+  try {
+    const scrapedTranscript = await scrapeTranscriptFromYouTubePage(videoId);
+    results.tests.push({
+      test: 'Web Scraping - YouTube Page',
+      success: true,
+      details: {
+        segmentCount: scrapedTranscript.length,
+        firstSegment: scrapedTranscript[0] ? {
+          text: scrapedTranscript[0].text.substring(0, 100) + '...',
+          offset: scrapedTranscript[0].offset,
+          duration: scrapedTranscript[0].duration
+        } : null,
+        lastSegment: scrapedTranscript[scrapedTranscript.length - 1] ? {
+          text: scrapedTranscript[scrapedTranscript.length - 1].text.substring(0, 100) + '...',
+          offset: scrapedTranscript[scrapedTranscript.length - 1].offset,
+          duration: scrapedTranscript[scrapedTranscript.length - 1].duration
+        } : null
+      }
+    });
+  } catch (err: any) {
+    results.tests.push({
+      test: 'Web Scraping - YouTube Page',
+      success: false,
+      error: err.message
+    });
   }
 
   return res.status(200).json(results);

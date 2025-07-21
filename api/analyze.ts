@@ -41,31 +41,7 @@ const POTENTIAL_EMOTIONS_SUBCATEGORIES: string[] = [
   'Cold/Detached',
 ];
 
-// ASR transcription function using Python endpoint
-async function transcribeWithASR(videoId: string) {
-  try {
-    console.log(`[ASR] Calling Python ASR endpoint for video ${videoId}...`);
-    
-    const response = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/transcribe`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ videoId }),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`ASR endpoint failed with status ${response.status}`);
-    }
-    
-    const result = await response.json();
-    console.log(`[ASR] ASR transcription completed with ${result.transcriptSegmentCount} segments`);
-    return result;
-  } catch (error) {
-    console.error(`[ASR] ASR transcription failed:`, error);
-    throw error;
-  }
-}
+
 
 // Enhanced transcript fetching with NoteGPT-style multi-layered approach
 async function fetchTranscriptWithFallbacks(videoId: string) {
@@ -734,25 +710,7 @@ export default async function handler(
   
   if (!transcript) {
     console.error('[NoteGPT-style] Transcript fetch failed:', transcriptError);
-    console.log('[NoteGPT-style] Attempting ASR fallback...');
-    
-    // Try ASR as fallback
-    try {
-      const asrResult = await transcribeWithASR(videoId);
-      if (asrResult && asrResult.transcript && asrResult.transcript.length > 0) {
-        console.log(`[NoteGPT-style] ASR fallback successful with ${asrResult.transcript.length} segments`);
-        return res.status(200).json({
-          events: [], // Will be analyzed in the next step
-          extractionMethod: asrResult.extractionMethod,
-          transcriptSegmentCount: asrResult.transcriptSegmentCount,
-          asrTranscript: asrResult.transcript // Include ASR transcript for analysis
-        });
-      }
-    } catch (asrError) {
-      console.error('[NoteGPT-style] ASR fallback also failed:', asrError);
-    }
-    
-    return res.status(500).json({ error: transcriptError || 'Unable to retrieve this transcript or transcribe audio.' });
+    return res.status(500).json({ error: transcriptError || 'Unable to retrieve this transcript.' });
   }
 
   if (transcript.length === 0) {

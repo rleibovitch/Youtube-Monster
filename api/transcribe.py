@@ -1,3 +1,4 @@
+# vercel-python
 import os
 import json
 import tempfile
@@ -6,6 +7,85 @@ from http.server import BaseHTTPRequestHandler
 from transformers import pipeline
 import yt_dlp
 import torch
+
+# Vercel Python function configuration
+def handler(request, context):
+    return transcribe_handler(request, context)
+
+class TranscribeHandler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        # Set CORS headers
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+        
+        if self.path != '/api/transcribe':
+            self.wfile.write(json.dumps({'error': 'Invalid endpoint'}).encode())
+            return
+        
+        try:
+            # Read request body
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            request_data = json.loads(post_data.decode('utf-8'))
+            
+            video_id = request_data.get('videoId')
+            if not video_id:
+                self.wfile.write(json.dumps({'error': "Missing 'videoId' in request body."}).encode())
+                return
+            
+            # Validate videoId format
+            if not (len(video_id) == 11 and video_id.replace('-', '').replace('_', '').isalnum()):
+                self.wfile.write(json.dumps({'error': "Invalid video ID format. YouTube video IDs should be 11 characters long."}).encode())
+                return
+            
+            audio_path = None
+            
+            try:
+                print(f"[ASR] Starting ASR transcription for video: {video_id}")
+                
+                # Step 1: Download audio
+                audio_path = download_youtube_audio(video_id)
+                
+                # Step 2: Transcribe audio
+                transcript = transcribe_audio(audio_path)
+                
+                if len(transcript) == 0:
+                    self.wfile.write(json.dumps({'error': 'ASR transcription produced no results. The video may not contain speech or the audio quality is too poor.'}).encode())
+                    return
+                
+                print(f"[ASR] ASR transcription completed with {len(transcript)} segments")
+                
+                result = {
+                    'transcript': transcript,
+                    'extractionMethod': 'huggingface-whisper-asr',
+                    'transcriptSegmentCount': len(transcript)
+                }
+                
+                self.wfile.write(json.dumps(result).encode())
+                
+            except Exception as error:
+                print(f"[ASR] ASR transcription failed: {error}")
+                self.wfile.write(json.dumps({'error': str(error)}).encode())
+            finally:
+                # Cleanup audio file
+                if audio_path:
+                    cleanup_audio_file(audio_path)
+                    
+        except Exception as error:
+            print(f"[ASR] Request processing failed: {error}")
+            self.wfile.write(json.dumps({'error': 'Internal server error'}).encode())
+    
+    def do_OPTIONS(self):
+        # Handle preflight requests
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
 
 def download_youtube_audio(video_id):
     """Download audio from YouTube video"""
@@ -92,77 +172,6 @@ def cleanup_audio_file(audio_path):
     except Exception as error:
         print(f"[ASR] Failed to cleanup audio file: {error}")
 
-class handler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        # Set CORS headers
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
-        
-        if self.path != '/api/transcribe':
-            self.wfile.write(json.dumps({'error': 'Invalid endpoint'}).encode())
-            return
-        
-        try:
-            # Read request body
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            request_data = json.loads(post_data.decode('utf-8'))
-            
-            video_id = request_data.get('videoId')
-            if not video_id:
-                self.wfile.write(json.dumps({'error': "Missing 'videoId' in request body."}).encode())
-                return
-            
-            # Validate videoId format
-            if not (len(video_id) == 11 and video_id.replace('-', '').replace('_', '').isalnum()):
-                self.wfile.write(json.dumps({'error': "Invalid video ID format. YouTube video IDs should be 11 characters long."}).encode())
-                return
-            
-            audio_path = None
-            
-            try:
-                print(f"[ASR] Starting ASR transcription for video: {video_id}")
-                
-                # Step 1: Download audio
-                audio_path = download_youtube_audio(video_id)
-                
-                # Step 2: Transcribe audio
-                transcript = transcribe_audio(audio_path)
-                
-                if len(transcript) == 0:
-                    self.wfile.write(json.dumps({'error': 'ASR transcription produced no results. The video may not contain speech or the audio quality is too poor.'}).encode())
-                    return
-                
-                print(f"[ASR] ASR transcription completed with {len(transcript)} segments")
-                
-                result = {
-                    'transcript': transcript,
-                    'extractionMethod': 'huggingface-whisper-asr',
-                    'transcriptSegmentCount': len(transcript)
-                }
-                
-                self.wfile.write(json.dumps(result).encode())
-                
-            except Exception as error:
-                print(f"[ASR] ASR transcription failed: {error}")
-                self.wfile.write(json.dumps({'error': str(error)}).encode())
-            finally:
-                # Cleanup audio file
-                if audio_path:
-                    cleanup_audio_file(audio_path)
-                    
-        except Exception as error:
-            print(f"[ASR] Request processing failed: {error}")
-            self.wfile.write(json.dumps({'error': 'Internal server error'}).encode())
-    
-    def do_OPTIONS(self):
-        # Handle preflight requests
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers() 
+# For local development
+if __name__ == "__main__":
+    handler = TranscribeHandler 

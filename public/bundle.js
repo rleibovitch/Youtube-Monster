@@ -24721,13 +24721,13 @@
   ] });
   var MonsterDetector = ({ activeDetections }) => {
     const activeSpeech = new Set(
-      activeDetections.filter((d) => d.category === "Negative Speech" /* SPEECH */).map((d) => d.subCategory)
+      activeDetections.filter((d) => d.category === "Negative Speech").map((d) => d.subCategory)
     );
     const activeBehavior = new Set(
-      activeDetections.filter((d) => d.category === "Negative Behavior" /* BEHAVIOR */).map((d) => d.subCategory)
+      activeDetections.filter((d) => d.category === "Negative Behavior").map((d) => d.subCategory)
     );
     const activeEmotions = new Set(
-      activeDetections.filter((d) => d.category === "Potential Emotions" /* POTENTIAL_EMOTIONS */).map((d) => d.subCategory)
+      activeDetections.filter((d) => d.category === "Potential Emotions").map((d) => d.subCategory)
     );
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "bg-white rounded-lg p-4 shadow-xl shadow-gray-200/50 border border-gray-200", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "text-xl font-bold mb-4 text-center text-red-400", children: "Sentiment Analysis" }),
@@ -24776,13 +24776,13 @@
   };
   var getCategoryColor = (category) => {
     switch (category) {
-      case "Negative Speech" /* SPEECH */:
+      case "Negative Speech":
         return "#ca8a04";
       // yellow-600
-      case "Negative Behavior" /* BEHAVIOR */:
+      case "Negative Behavior":
         return "#dc2626";
       // red-600
-      case "Potential Emotions" /* POTENTIAL_EMOTIONS */:
+      case "Potential Emotions":
         return "#9333ea";
       // purple-600
       default:
@@ -24842,17 +24842,17 @@
   }) });
   function generateExecutiveSummary(event) {
     switch (event.category) {
-      case "Negative Speech" /* SPEECH */:
+      case "Negative Speech":
         return `Flagged for negative speech (${event.subCategory}): ${event.description}`;
-      case "Negative Behavior" /* BEHAVIOR */:
+      case "Negative Behavior":
         return `Flagged for negative behavior (${event.subCategory}): ${event.description}`;
-      case "Potential Emotions" /* POTENTIAL_EMOTIONS */:
+      case "Potential Emotions":
         return `Flagged for potential negative emotion (${event.subCategory}): ${event.description}`;
       default:
         return event.description;
     }
   }
-  var ContextualInfoPanel = ({ events, activeDetections, onCardClick, videoTitle, isLoading, kidFriendlyScore }) => {
+  var ContextualInfoPanel = ({ events, activeDetections, onCardClick, videoTitle, isLoading, kidFriendlyScore, extractionMethod }) => {
     const [viewMode, setViewMode] = (0, import_react3.useState)("all");
     const [expandedTimestamp, setExpandedTimestamp] = (0, import_react3.useState)(null);
     (0, import_react3.useEffect)(() => {
@@ -24861,6 +24861,26 @@
         setExpandedTimestamp(null);
       }
     }, [isLoading, events]);
+    const getExtractionMethodDisplay = (method) => {
+      const methodMap = {
+        "youtube-transcript-primary": { label: "Primary Transcript", color: "bg-green-100 text-green-800", description: "Direct YouTube transcript" },
+        "youtube-transcript-en": { label: "English Transcript", color: "bg-blue-100 text-blue-800", description: "English language transcript" },
+        "youtube-transcript-en-US": { label: "US English Transcript", color: "bg-blue-100 text-blue-800", description: "US English transcript" },
+        "youtube-transcript-en-GB": { label: "UK English Transcript", color: "bg-blue-100 text-blue-800", description: "UK English transcript" },
+        "youtube-transcript-auto": { label: "Auto Transcript", color: "bg-purple-100 text-purple-800", description: "Auto-generated transcript" },
+        "youtube-transcript-listed": { label: "Listed Transcript", color: "bg-indigo-100 text-indigo-800", description: "From available transcripts list" },
+        "web-scraping-youtube": { label: "Web Scraped", color: "bg-orange-100 text-orange-800", description: "Extracted from YouTube page" },
+        "ai-generated": { label: "AI Generated", color: "bg-pink-100 text-pink-800", description: "AI-generated based on metadata" },
+        "youtube-data-api": { label: "YouTube API", color: "bg-gray-100 text-gray-800", description: "YouTube Data API metadata" },
+        "huggingface-whisper-asr": { label: "ASR Transcription", color: "bg-teal-100 text-teal-800", description: "Hugging Face Whisper speech recognition" },
+        "unknown": { label: "Unknown Method", color: "bg-gray-100 text-gray-800", description: "Method not specified" }
+      };
+      const methodInfo = methodMap[method] || { label: method, color: "bg-gray-100 text-gray-800", description: "Custom extraction method" };
+      return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex items-center gap-2 mb-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: `px-2 py-1 rounded-full text-xs font-medium ${methodInfo.color}`, children: methodInfo.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: "text-xs text-gray-500", children: methodInfo.description })
+      ] });
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "bg-white rounded-lg shadow-xl shadow-gray-200/50 h-full flex flex-col border border-gray-200", children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "p-4 border-b border-gray-200", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex items-center justify-between", children: [
@@ -24890,6 +24910,7 @@
         ] }),
         !isLoading && events.length > 0 && viewMode === "all" && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(ScoreDisplay, { score: kidFriendlyScore }),
+          extractionMethod && getExtractionMethodDisplay(extractionMethod),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(EventList, { events, onCardClick, expandedTimestamp, onExpand: setExpandedTimestamp })
         ] }),
         !isLoading && events.length > 0 && viewMode === "current" && (activeDetections.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(EventList, { events: activeDetections, onCardClick, expandedTimestamp, onExpand: setExpandedTimestamp }) : /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "flex flex-col items-center justify-center h-full text-gray-400 text-center", children: [
@@ -25171,6 +25192,32 @@
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_jsx_runtime9.Fragment, { children });
   };
 
+  // services/asrService.ts
+  var analyzeWithASR = async (videoId, sensitivity = 5, videoDuration) => {
+    try {
+      const response = await fetch("/api/analyze-asr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ videoId, sensitivity, videoDuration })
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || `ASR analysis failed with status ${response.status}`;
+        throw new Error(errorMessage);
+      }
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      console.error("Failed to analyze with ASR:", e);
+      if (e instanceof Error) {
+        throw e;
+      }
+      throw new Error("An unknown network error occurred during ASR analysis.");
+    }
+  };
+
   // services/geminiService.ts
   var generateAnalysis = async (videoTopic, videoDuration, videoId) => {
     try {
@@ -25188,7 +25235,16 @@
       }
       const data = await response.json();
       if (Array.isArray(data)) {
+        return {
+          events: data,
+          extractionMethod: "unknown",
+          transcriptSegmentCount: data.length
+        };
+      } else if (data.events && Array.isArray(data.events)) {
         return data;
+      } else if (data.asrTranscript && Array.isArray(data.asrTranscript)) {
+        console.log("ASR transcript received, analyzing with ASR service...");
+        return await analyzeWithASR(videoId, 5, videoDuration);
       } else {
         throw new Error("Invalid data format received from analysis server.");
       }
@@ -25217,6 +25273,7 @@
     const [history, setHistory] = (0, import_react5.useState)([]);
     const [indexedVideos, setIndexedVideos] = (0, import_react5.useState)([]);
     const [showIndexPanel, setShowIndexPanel] = (0, import_react5.useState)(false);
+    const [extractionMethod, setExtractionMethod] = (0, import_react5.useState)("");
     const playerRef = (0, import_react5.useRef)(null);
     const extractVideoId = (url) => {
       try {
@@ -25263,8 +25320,9 @@
         return;
       }
       try {
-        const events = await generateAnalysis("a heated online debate or argument", videoDuration || void 0, extractedId);
-        setAnalysisEvents(events.sort((a, b) => a.timestamp - b.timestamp));
+        const result = await generateAnalysis("a heated online debate or argument", videoDuration || void 0, extractedId);
+        setAnalysisEvents(result.events.sort((a, b) => a.timestamp - b.timestamp));
+        setExtractionMethod(result.extractionMethod || "unknown");
         setVideoId(extractedId);
         updateUrl(extractedId);
       } catch (e) {
@@ -25300,6 +25358,7 @@
       setVideoTitle(item.videoTitle);
       setAnalysisEvents(item.analysisEvents);
       setKidFriendlyScore(item.kidFriendlyScore);
+      setExtractionMethod(item.extractionMethod || "unknown");
       setCurrentTime(0);
       setVideoDuration(null);
       playerRef.current?.seekTo(0, true);
@@ -25311,6 +25370,7 @@
       setVideoTitle(video.videoTitle);
       setAnalysisEvents(video.analysisEvents);
       setKidFriendlyScore(video.kidFriendlyScore);
+      setExtractionMethod(video.extractionMethod || "unknown");
       setCurrentTime(0);
       setVideoDuration(null);
     };
@@ -25336,7 +25396,8 @@
             videoTitle,
             youtubeUrl,
             analysisEvents,
-            kidFriendlyScore: score
+            kidFriendlyScore: score,
+            extractionMethod
           };
           setHistory((prevHistory) => {
             const filteredHistory = prevHistory.filter((item) => item.videoId !== videoId);
@@ -25414,7 +25475,8 @@
             onCardClick: handleSeekTo,
             videoTitle,
             isLoading,
-            kidFriendlyScore
+            kidFriendlyScore,
+            extractionMethod
           }
         ) })
       ] }),

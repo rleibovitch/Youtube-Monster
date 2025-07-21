@@ -1,11 +1,6 @@
 {
   "framework": null,
   "outputDirectory": "public",
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@3.1.5"
-    }
-  },
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "devCommand": "npm run dev",

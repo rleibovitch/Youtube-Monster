@@ -10,6 +10,7 @@ interface ContextualInfoPanelProps {
     videoTitle: string;
     isLoading: boolean;
     kidFriendlyScore: number | null;
+    extractionMethod?: string;
 }
 
 const formatTimestamp = (seconds: number): string => {
@@ -18,13 +19,13 @@ const formatTimestamp = (seconds: number): string => {
     return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
 };
 
-const getCategoryColor = (category: NegativeCategory): string => {
+const getCategoryColor = (category: string): string => {
     switch (category) {
-        case NegativeCategory.SPEECH:
+        case 'Negative Speech':
             return '#ca8a04'; // yellow-600
-        case NegativeCategory.BEHAVIOR:
+        case 'Negative Behavior':
             return '#dc2626'; // red-600
-        case NegativeCategory.POTENTIAL_EMOTIONS:
+        case 'Potential Emotions':
             return '#9333ea'; // purple-600
         default:
             return '#6b7280'; // gray-500
@@ -94,18 +95,18 @@ const EventList: React.FC<{ events: AnalysisEvent[]; onCardClick: (timestamp: nu
 
 function generateExecutiveSummary(event: AnalysisEvent): string {
     switch (event.category) {
-        case NegativeCategory.SPEECH:
+        case 'Negative Speech':
             return `Flagged for negative speech (${event.subCategory}): ${event.description}`;
-        case NegativeCategory.BEHAVIOR:
+        case 'Negative Behavior':
             return `Flagged for negative behavior (${event.subCategory}): ${event.description}`;
-        case NegativeCategory.POTENTIAL_EMOTIONS:
+        case 'Potential Emotions':
             return `Flagged for potential negative emotion (${event.subCategory}): ${event.description}`;
         default:
             return event.description;
     }
 }
 
-export const ContextualInfoPanel: React.FC<ContextualInfoPanelProps> = ({ events, activeDetections, onCardClick, videoTitle, isLoading, kidFriendlyScore }) => {
+export const ContextualInfoPanel: React.FC<ContextualInfoPanelProps> = ({ events, activeDetections, onCardClick, videoTitle, isLoading, kidFriendlyScore, extractionMethod }) => {
     const [viewMode, setViewMode] = useState<'all' | 'current'>('all');
     const [expandedTimestamp, setExpandedTimestamp] = useState<number | null>(null);
     
@@ -116,6 +117,33 @@ export const ContextualInfoPanel: React.FC<ContextualInfoPanelProps> = ({ events
             setExpandedTimestamp(null);
         }
     }, [isLoading, events]);
+
+    const getExtractionMethodDisplay = (method: string) => {
+        const methodMap: { [key: string]: { label: string; color: string; description: string } } = {
+            'youtube-transcript-primary': { label: 'Primary Transcript', color: 'bg-green-100 text-green-800', description: 'Direct YouTube transcript' },
+            'youtube-transcript-en': { label: 'English Transcript', color: 'bg-blue-100 text-blue-800', description: 'English language transcript' },
+            'youtube-transcript-en-US': { label: 'US English Transcript', color: 'bg-blue-100 text-blue-800', description: 'US English transcript' },
+            'youtube-transcript-en-GB': { label: 'UK English Transcript', color: 'bg-blue-100 text-blue-800', description: 'UK English transcript' },
+            'youtube-transcript-auto': { label: 'Auto Transcript', color: 'bg-purple-100 text-purple-800', description: 'Auto-generated transcript' },
+            'youtube-transcript-listed': { label: 'Listed Transcript', color: 'bg-indigo-100 text-indigo-800', description: 'From available transcripts list' },
+            'web-scraping-youtube': { label: 'Web Scraped', color: 'bg-orange-100 text-orange-800', description: 'Extracted from YouTube page' },
+            'ai-generated': { label: 'AI Generated', color: 'bg-pink-100 text-pink-800', description: 'AI-generated based on metadata' },
+            'youtube-data-api': { label: 'YouTube API', color: 'bg-gray-100 text-gray-800', description: 'YouTube Data API metadata' },
+            'huggingface-whisper-asr': { label: 'ASR Transcription', color: 'bg-teal-100 text-teal-800', description: 'Hugging Face Whisper speech recognition' },
+            'unknown': { label: 'Unknown Method', color: 'bg-gray-100 text-gray-800', description: 'Method not specified' }
+        };
+
+        const methodInfo = methodMap[method] || { label: method, color: 'bg-gray-100 text-gray-800', description: 'Custom extraction method' };
+        
+        return (
+            <div className="flex items-center gap-2 mb-3">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${methodInfo.color}`}>
+                    {methodInfo.label}
+                </span>
+                <span className="text-xs text-gray-500">{methodInfo.description}</span>
+            </div>
+        );
+    };
 
     return (
         <div className="bg-white rounded-lg shadow-xl shadow-gray-200/50 h-full flex flex-col border border-gray-200">
@@ -152,6 +180,7 @@ export const ContextualInfoPanel: React.FC<ContextualInfoPanelProps> = ({ events
                 {!isLoading && events.length > 0 && viewMode === 'all' && (
                     <>
                         <ScoreDisplay score={kidFriendlyScore} />
+                        {extractionMethod && getExtractionMethodDisplay(extractionMethod)}
                         <EventList events={events} onCardClick={onCardClick} expandedTimestamp={expandedTimestamp} onExpand={setExpandedTimestamp} />
                     </>
                 )}

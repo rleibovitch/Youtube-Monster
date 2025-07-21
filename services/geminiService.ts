@@ -1,6 +1,7 @@
-import type { AnalysisEvent } from '../types';
+import type { AnalysisEvent, AnalysisResult, ASRResult } from '../types';
+import { transcribeWithASR, analyzeWithASR } from './asrService';
 
-export const generateAnalysis = async (videoTopic: string, videoDuration?: number, videoId?: string): Promise<AnalysisEvent[]> => {
+export const generateAnalysis = async (videoTopic: string, videoDuration?: number, videoId?: string): Promise<AnalysisResult> => {
     try {
         const response = await fetch('/api/analyze', {
             method: 'POST',
@@ -18,8 +19,19 @@ export const generateAnalysis = async (videoTopic: string, videoDuration?: numbe
 
         const data = await response.json();
         
+        // Handle both old format (array) and new format (object with events)
         if (Array.isArray(data)) {
-            return data as AnalysisEvent[];
+            return {
+                events: data as AnalysisEvent[],
+                extractionMethod: 'unknown',
+                transcriptSegmentCount: data.length
+            };
+        } else if (data.events && Array.isArray(data.events)) {
+            return data as AnalysisResult;
+        } else if (data.asrTranscript && Array.isArray(data.asrTranscript)) {
+            // Handle ASR fallback case - need to analyze the ASR transcript
+            console.log('ASR transcript received, analyzing with ASR service...');
+            return await analyzeWithASR(videoId!, 5, videoDuration);
         } else {
             throw new Error("Invalid data format received from analysis server.");
         }

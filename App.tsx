@@ -26,6 +26,7 @@ const App: React.FC = () => {
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [indexedVideos, setIndexedVideos] = useState<HistoryItem[]>([]);
     const [showIndexPanel, setShowIndexPanel] = useState<boolean>(false);
+    const [extractionMethod, setExtractionMethod] = useState<string>('');
     
     const playerRef = useRef<YT.Player | null>(null);
 
@@ -85,8 +86,9 @@ const App: React.FC = () => {
 
         try {
             // If videoDuration is available, pass it; otherwise, skip
-            const events = await generateAnalysis('a heated online debate or argument', videoDuration || undefined, extractedId);
-            setAnalysisEvents(events.sort((a, b) => a.timestamp - b.timestamp));
+            const result = await generateAnalysis('a heated online debate or argument', videoDuration || undefined, extractedId);
+            setAnalysisEvents(result.events.sort((a, b) => a.timestamp - b.timestamp));
+            setExtractionMethod(result.extractionMethod || 'unknown');
             setVideoId(extractedId);
             updateUrl(extractedId);
         } catch (e) {
@@ -128,6 +130,7 @@ const App: React.FC = () => {
         setVideoTitle(item.videoTitle);
         setAnalysisEvents(item.analysisEvents);
         setKidFriendlyScore(item.kidFriendlyScore);
+        setExtractionMethod(item.extractionMethod || 'unknown');
         
         setCurrentTime(0);
         setVideoDuration(null);
@@ -142,6 +145,7 @@ const App: React.FC = () => {
         setVideoTitle(video.videoTitle);
         setAnalysisEvents(video.analysisEvents);
         setKidFriendlyScore(video.kidFriendlyScore);
+        setExtractionMethod(video.extractionMethod || 'unknown');
         setCurrentTime(0);
         setVideoDuration(null);
     };
@@ -174,6 +178,7 @@ const App: React.FC = () => {
                    youtubeUrl,
                    analysisEvents,
                    kidFriendlyScore: score,
+                   extractionMethod,
                 };
                 
                 setHistory(prevHistory => {
@@ -272,6 +277,7 @@ const App: React.FC = () => {
                           videoTitle={videoTitle}
                           isLoading={isLoading}
                           kidFriendlyScore={kidFriendlyScore}
+                          extractionMethod={extractionMethod}
                         />
                     </div>
                 </main>

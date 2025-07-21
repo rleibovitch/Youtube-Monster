@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { AnalysisEvent } from '../types';
 import { NegativeCategory } from '../types';
 import { NEGATIVE_BEHAVIOR_SUBCATEGORIES, NEGATIVE_SPEECH_SUBCATEGORIES, POTENTIAL_EMOTIONS_SUBCATEGORIES } from '../constants';
@@ -43,17 +43,17 @@ const CategorySection: React.FC<{
 export const MonsterDetector: React.FC<MonsterDetectorProps> = ({ activeDetections }) => {
     const activeSpeech = new Set(
         activeDetections
-            .filter(d => d.category === NegativeCategory.SPEECH)
+            .filter(d => d.category === 'Negative Speech')
             .map(d => d.subCategory)
     );
     const activeBehavior = new Set(
         activeDetections
-            .filter(d => d.category === NegativeCategory.BEHAVIOR)
+            .filter(d => d.category === 'Negative Behavior')
             .map(d => d.subCategory)
     );
     const activeEmotions = new Set(
         activeDetections
-            .filter(d => d.category === NegativeCategory.POTENTIAL_EMOTIONS)
+            .filter(d => d.category === 'Potential Emotions')
             .map(d => d.subCategory)
     );
 

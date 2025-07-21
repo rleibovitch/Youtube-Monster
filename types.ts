@@ -5,17 +5,36 @@ export enum NegativeCategory {
 }
 
 export interface AnalysisEvent {
-  timestamp: number;
-  category: NegativeCategory;
-  subCategory: string;
-  description: string;
-  phrase: string; // The quoted phrase or utterance
+    timestamp: number;
+    category: string;
+    subCategory: string;
+    description: string;
+    phrase?: string;
+}
+
+export interface AnalysisResult {
+    events: AnalysisEvent[];
+    extractionMethod?: string;
+    transcriptSegmentCount?: number;
+}
+
+export interface ASRTranscriptSegment {
+    offset: number;
+    text: string;
+    duration?: number;
+}
+
+export interface ASRResult {
+    transcript: ASRTranscriptSegment[];
+    extractionMethod: string;
+    transcriptSegmentCount: number;
 }
 
 export interface HistoryItem {
-  videoId: string;
-  videoTitle: string;
-  youtubeUrl: string;
-  analysisEvents: AnalysisEvent[];
-  kidFriendlyScore: number | null;
+    videoId: string;
+    videoTitle: string;
+    youtubeUrl: string;
+    analysisEvents: AnalysisEvent[];
+    kidFriendlyScore: number | null;
+    extractionMethod?: string;
 }

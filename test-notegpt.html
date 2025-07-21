@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteGPT-Style Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .method { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 3px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        input { padding: 8px; width: 300px; margin-right: 10px; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>NoteGPT-Style Transcript Extraction Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Video Analysis</h2>
+        <input type="text" id="videoId" placeholder="Enter YouTube Video ID (e.g., dQw4w9WgXcQ)" value="dQw4w9WgXcQ">
+        <button onclick="testAnalysis()">Test Analysis</button>
+        <div id="analysisResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Transcript Extraction Methods</h2>
+        <input type="text" id="testVideoId" placeholder="Enter YouTube Video ID" value="dQw4w9WgXcQ">
+        <button onclick="testExtractionMethods()">Test All Methods</button>
+        <div id="extractionResult"></div>
+    </div>
+
+    <script>
+        async function testAnalysis() {
+            const videoId = document.getElementById('videoId').value;
+            const resultDiv = document.getElementById('analysisResult');
+            
+            resultDiv.innerHTML = '<p>Testing analysis...</p>';
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        videoTopic: 'test video',
+                        videoId: videoId 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>Analysis Successful!</h3>
+                            <p><strong>Extraction Method:</strong> ${data.extractionMethod || 'unknown'}</p>
+                            <p><strong>Transcript Segments:</strong> ${data.transcriptSegmentCount || 0}</p>
+                            <p><strong>Events Found:</strong> ${data.events ? data.events.length : 0}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>Analysis Failed</h3>
+                            <p>${data.error || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>Network Error</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testExtractionMethods() {
+            const videoId = document.getElementById('testVideoId').value;
+            const resultDiv = document.getElementById('extractionResult');
+            
+            resultDiv.innerHTML = '<p>Testing extraction methods...</p>';
+            
+            try {
+                const response = await fetch('/api/notegpt-test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ videoId })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    let html = `
+                        <div class="success">
+                            <h3>Extraction Test Results</h3>
+                            <p><strong>Video ID:</strong> ${data.videoId}</p>
+                            <p><strong>Total Methods Tested:</strong> ${data.summary.totalMethods}</p>
+                            <p><strong>Successful Methods:</strong> ${data.summary.successfulMethods}</p>
+                            <p><strong>Best Method:</strong> ${data.summary.bestMethod ? data.summary.bestMethod.method : 'None'}</p>
+                            <h4>Method Details:</h4>
+                    `;
+                    
+                    data.extractionMethods.forEach(method => {
+                        const statusClass = method.success ? 'success' : 'error';
+                        html += `
+                            <div class="method ${statusClass}">
+                                <strong>${method.method}</strong> - ${method.success ? 'SUCCESS' : 'FAILED'}
+                                ${method.success ? `
+                                    <br>Segments: ${method.segmentCount}
+                                    <br>Sample: ${method.sampleText}
+                                    <br>Confidence: ${method.confidence}
+                                ` : `
+                                    <br>Error: ${method.error}
+                                `}
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            <h4>Recommendations:</h4>
+                            <ul>
+                                ${data.summary.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>Test Failed</h3>
+                            <p>${data.error || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>Network Error</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

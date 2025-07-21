@@ -4,14 +4,18 @@ This document describes the Automatic Speech Recognition (ASR) integration added
 
 ## Overview
 
-The YouTube Monster app now includes ASR capabilities using Hugging Face's Whisper model to transcribe YouTube videos when traditional transcript extraction methods fail. This provides a fallback mechanism to ensure videos can be analyzed even when they don't have captions or transcripts available.
+The YouTube Monster app now includes ASR capabilities as a fallback mechanism when traditional transcript extraction methods fail. This ensures videos can be analyzed even when they don't have captions or transcripts available.
+
+## Current Implementation
+
+The ASR functionality is currently implemented as a placeholder that can be extended with cloud-based ASR services. The infrastructure is in place for future ASR integration.
 
 ## Features
 
-### ASR Transcription
-- **Model**: Uses OpenAI's Whisper Large v3 model via Hugging Face Transformers
-- **Audio Download**: Automatically downloads YouTube audio using yt-dlp
-- **Chunked Processing**: Processes audio in 30-second chunks with 5-second overlap for better accuracy
+### ASR Transcription (Future Implementation)
+- **Cloud-Based**: Designed to work with cloud ASR services (Google Speech-to-Text, Azure Speech, etc.)
+- **Audio Download**: Will automatically download YouTube audio for processing
+- **Chunked Processing**: Designed for 30-second chunks with 5-second overlap for better accuracy
 - **Timestamp Support**: Provides precise timestamps for each transcribed segment
 - **Automatic Cleanup**: Removes temporary audio files after processing
 
@@ -23,30 +27,24 @@ The YouTube Monster app now includes ASR capabilities using Hugging Face's Whisp
 
 ## API Endpoints
 
-### `/api/transcribe` (Python)
+### `/api/transcribe` (Node.js)
 - **Method**: POST
-- **Purpose**: Transcribe YouTube video audio using Whisper
+- **Purpose**: Transcribe YouTube video audio (placeholder for cloud ASR)
 - **Input**: `{ "videoId": "string" }`
-- **Output**: `{ "transcript": [...], "extractionMethod": "huggingface-whisper-asr", "transcriptSegmentCount": number }`
+- **Output**: `{ "transcript": [...], "extractionMethod": "cloud-asr-fallback", "transcriptSegmentCount": number }`
 
-### `/api/analyze-asr` (Python)
+### `/api/analyze-asr` (Node.js)
 - **Method**: POST
 - **Purpose**: Complete ASR transcription and analysis pipeline
 - **Input**: `{ "videoId": "string", "sensitivity": number, "videoDuration": number }`
-- **Output**: `{ "events": [...], "extractionMethod": "huggingface-whisper-asr", "transcriptSegmentCount": number }`
+- **Output**: `{ "events": [...], "extractionMethod": "cloud-asr-fallback", "transcriptSegmentCount": number }`
 
 ## Dependencies
 
-### Python Dependencies (requirements.txt)
+### Node.js Dependencies
 ```
-transformers==4.37.2
-torch==2.1.2
-numpy==1.24.3
-librosa==0.10.1
-yt-dlp==2023.12.30
-accelerate==0.25.0
-datasets==2.16.1
-tokenizers==0.15.0
+@google/genai: ^1.8.0
+youtube-transcript: ^1.2.1
 ```
 
 ### Environment Variables

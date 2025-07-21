@@ -1,8 +1,0 @@
-transformers==4.37.2
-torch==2.1.2
-numpy==1.24.3
-librosa==0.10.1
-yt-dlp==2023.12.30
-accelerate==0.25.0
-datasets==2.16.1
-tokenizers==0.15.0 

@@ -18,6 +18,7 @@ export const NEGATIVE_BEHAVIOR_SUBCATEGORIES: string[] = [
   'Harassment',
   'Drinking alcohol',
   'Violence',
+  'Embarrassed/Shamed',
 ];
 
 export const POTENTIAL_EMOTIONS_SUBCATEGORIES: string[] = [
@@ -47,6 +48,7 @@ export const EVENT_PENALTIES: { [key: string]: number } = {
   'Bullying': 3,
   'Drinking alcohol': 2,
   'Harassment': 4,
+  'Embarrassed/Shamed': 2,
   
   // Highest Impact
   'Hate Speech': 5,

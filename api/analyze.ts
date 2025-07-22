@@ -30,6 +30,7 @@ const NEGATIVE_BEHAVIOR_SUBCATEGORIES: string[] = [
   'Harassment',
   'Drinking alcohol',
   'Violence',
+  'Embarrassed/Shamed',
 ];
 
 const POTENTIAL_EMOTIONS_SUBCATEGORIES: string[] = [

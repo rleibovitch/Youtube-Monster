@@ -7,6 +7,7 @@ export const NEGATIVE_SPEECH_SUBCATEGORIES: string[] = [
   'Passive-Aggression',
   'Hostility',
   'Hate Speech',
+  'Sexism',
   'Impaired Empathy / Dismissiveness',
   'Incoherence',
   'Excessive Self-Reference',
@@ -17,7 +18,6 @@ export const NEGATIVE_BEHAVIOR_SUBCATEGORIES: string[] = [
   'Harassment',
   'Drinking alcohol',
   'Violence',
-  'Sexism',
 ];
 
 export const POTENTIAL_EMOTIONS_SUBCATEGORIES: string[] = [
@@ -37,13 +37,14 @@ export const EVENT_PENALTIES: { [key: string]: number } = {
   'Envy/Resentment': 1,
   'Passive-Aggression': 1,
   'Hostility': 2,
+  'Sexism': 3,
+  'Hate Speech': 5,
   'Impaired Empathy / Dismissiveness': 2,
   'Incoherence': 0.5,
   'Excessive Self-Reference': 0.5,
 
   // Negative Behavior Penalties (higher impact)
   'Bullying': 3,
-  'Sexism': 3,
   'Drinking alcohol': 2,
   'Harassment': 4,
   

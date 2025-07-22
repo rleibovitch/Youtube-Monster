@@ -3,6 +3,8 @@ import { transcribeWithASR, analyzeWithASR } from './asrService';
 
 export const generateAnalysis = async (videoTopic: string, videoDuration?: number, videoId?: string): Promise<AnalysisResult> => {
     try {
+        console.log('Making API request to /api/analyze with:', { videoTopic, videoDuration, videoId });
+        
         const response = await fetch('/api/analyze', {
             method: 'POST',
             headers: {
@@ -11,13 +13,18 @@ export const generateAnalysis = async (videoTopic: string, videoDuration?: numbe
             body: JSON.stringify({ videoTopic, videoDuration, videoId }),
         });
 
+        console.log('API response status:', response.status);
+        console.log('API response headers:', Object.fromEntries(response.headers.entries()));
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({})); 
             const errorMessage = errorData.error || `Request failed with status ${response.status}`;
+            console.error('API error response:', errorData);
             throw new Error(errorMessage);
         }
 
         const data = await response.json();
+        console.log('API response data:', data);
         
         // Handle both old format (array) and new format (object with events)
         if (Array.isArray(data)) {

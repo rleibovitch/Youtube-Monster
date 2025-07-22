@@ -84,15 +84,27 @@ const App: React.FC = () => {
             return;
         }
 
+        console.log('Starting analysis for video:', extractedId);
+        
         try {
             // If videoDuration is available, pass it; otherwise, skip
             const result = await generateAnalysis('a heated online debate or argument', videoDuration || undefined, extractedId);
-            setAnalysisEvents(result.events.sort((a, b) => a.timestamp - b.timestamp));
-            setExtractionMethod(result.extractionMethod || 'unknown');
-            setVideoId(extractedId);
-            updateUrl(extractedId);
+            console.log('Analysis result:', result);
+            
+            if (result.events && result.events.length > 0) {
+                setAnalysisEvents(result.events.sort((a, b) => a.timestamp - b.timestamp));
+                setExtractionMethod(result.extractionMethod || 'unknown');
+                setVideoId(extractedId);
+                updateUrl(extractedId);
+                console.log('Analysis completed successfully with', result.events.length, 'events');
+            } else {
+                console.log('Analysis completed but no events found');
+                setError('Analysis completed but no negative content was detected in this video.');
+                setVideoId(extractedId);
+                updateUrl(extractedId);
+            }
         } catch (e) {
-            console.error(e);
+            console.error('Analysis failed:', e);
             if (e instanceof Error) {
                 setError(e.message);
             } else {

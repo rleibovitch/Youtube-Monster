@@ -403,7 +403,7 @@ Make the transcript realistic and contextually appropriate for the video title a
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-04-17",
+              model: "gemini-1.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",

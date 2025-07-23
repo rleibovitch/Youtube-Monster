@@ -34,6 +34,17 @@ export const generateAnalysis = async (videoTopic: string, videoDuration?: numbe
                 transcriptSegmentCount: data.length
             };
         } else if (data.events && Array.isArray(data.events)) {
+            // Store transcript data if available
+            if (data.transcriptData) {
+                try {
+                    // Import and use transcript storage service
+                    const { transcriptStorageService } = await import('./transcriptStorageService');
+                    transcriptStorageService.storeTranscript(data.transcriptData);
+                    console.log('Transcript stored for validation');
+                } catch (error) {
+                    console.warn('Failed to store transcript:', error);
+                }
+            }
             return data as AnalysisResult;
         } else if (data.asrTranscript && Array.isArray(data.asrTranscript)) {
             // Handle ASR fallback case - need to analyze the ASR transcript

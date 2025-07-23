@@ -895,9 +895,34 @@ If there is no negative event, respond with an empty string.
   // Return the analysis results
   console.log(`[NoteGPT-style] Analysis complete. Found ${analysisEvents.length} events using method: ${method}`);
   
+  // Store transcript for validation and debugging
+  const transcriptData = {
+    videoId,
+    extractionMethod: method,
+    transcriptSegments: transcript,
+    totalSegments: transcript.length,
+    totalDuration: transcript.length > 0 ? transcript[transcript.length - 1].offset / 1000 : 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  
+  // Log transcript data for debugging
+  console.log(`[NoteGPT-style] Transcript data for storage:`, {
+    videoId,
+    method,
+    segmentCount: transcript.length,
+    totalDuration: transcriptData.totalDuration,
+    sampleSegments: transcript.slice(0, 3).map(s => ({
+      text: s.text.substring(0, 50) + '...',
+      offset: s.offset,
+      timestamp: s.offset / 1000
+    }))
+  });
+  
   return res.status(200).json({
     events: analysisEvents,
     extractionMethod: method,
-    transcriptSegmentCount: transcript.length
+    transcriptSegmentCount: transcript.length,
+    transcriptData // Include transcript data in response for client-side storage
   });
 }

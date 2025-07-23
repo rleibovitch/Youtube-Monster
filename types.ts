@@ -12,10 +12,25 @@ export interface AnalysisEvent {
     phrase?: string;
 }
 
+export interface TranscriptSegment {
+    offset: number;
+    text: string;
+    duration?: number;
+}
+
 export interface AnalysisResult {
     events: AnalysisEvent[];
     extractionMethod?: string;
     transcriptSegmentCount?: number;
+    transcriptData?: {
+        videoId: string;
+        extractionMethod: string;
+        transcriptSegments: TranscriptSegment[];
+        totalSegments: number;
+        totalDuration: number;
+        createdAt: string;
+        updatedAt: string;
+    };
 }
 
 export interface ASRTranscriptSegment {

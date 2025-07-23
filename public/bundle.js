@@ -1097,7 +1097,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect5(create, deps) {
+          function useEffect6(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1880,7 +1880,7 @@
           exports.useContext = useContext;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect5;
+          exports.useEffect = useEffect6;
           exports.useId = useId;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useInsertionEffect = useInsertionEffect;
@@ -24531,6 +24531,9 @@
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   var UrlInputForm = ({ onSubmit, isLoading, initialUrl }) => {
     const [url, setUrl] = (0, import_react.useState)(initialUrl);
+    (0, import_react.useEffect)(() => {
+      setUrl(initialUrl);
+    }, [initialUrl]);
     const handleSubmit = (e) => {
       e.preventDefault();
       if (url.trim()) {
@@ -24654,6 +24657,7 @@
     "Passive-Aggression",
     "Hostility",
     "Hate Speech",
+    "Sexism",
     "Impaired Empathy / Dismissiveness",
     "Incoherence",
     "Excessive Self-Reference"
@@ -24663,7 +24667,7 @@
     "Harassment",
     "Drinking alcohol",
     "Violence",
-    "Sexism"
+    "Embarrassed/Shamed"
   ];
   var POTENTIAL_EMOTIONS_SUBCATEGORIES = [
     "Angry",
@@ -24681,14 +24685,16 @@
     "Envy/Resentment": 1,
     "Passive-Aggression": 1,
     "Hostility": 2,
+    "Sexism": 3,
+    "Hate Speech": 5,
     "Impaired Empathy / Dismissiveness": 2,
     "Incoherence": 0.5,
     "Excessive Self-Reference": 0.5,
     // Negative Behavior Penalties (higher impact)
     "Bullying": 3,
-    "Sexism": 3,
     "Drinking alcohol": 2,
     "Harassment": 4,
+    "Embarrassed/Shamed": 2,
     // Highest Impact
     "Hate Speech": 5,
     "Violence": 5,
@@ -25221,6 +25227,7 @@
   // services/geminiService.ts
   var generateAnalysis = async (videoTopic, videoDuration, videoId) => {
     try {
+      console.log("Making API request to /api/analyze with:", { videoTopic, videoDuration, videoId });
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: {
@@ -25228,12 +25235,16 @@
         },
         body: JSON.stringify({ videoTopic, videoDuration, videoId })
       });
+      console.log("API response status:", response.status);
+      console.log("API response headers:", Object.fromEntries(response.headers.entries()));
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const errorMessage = errorData.error || `Request failed with status ${response.status}`;
+        console.error("API error response:", errorData);
         throw new Error(errorMessage);
       }
       const data = await response.json();
+      console.log("API response data:", data);
       if (Array.isArray(data)) {
         return {
           events: data,
@@ -25309,7 +25320,6 @@
       setIsLoading(true);
       setError(null);
       setAnalysisEvents([]);
-      setVideoId(null);
       setKidFriendlyScore(null);
       setVideoDuration(null);
       setYoutubeUrl(url);
@@ -25319,18 +25329,32 @@
         setIsLoading(false);
         return;
       }
+      console.log("Starting analysis for video:", extractedId);
       try {
         const result = await generateAnalysis("a heated online debate or argument", videoDuration || void 0, extractedId);
-        setAnalysisEvents(result.events.sort((a, b) => a.timestamp - b.timestamp));
-        setExtractionMethod(result.extractionMethod || "unknown");
-        setVideoId(extractedId);
-        updateUrl(extractedId);
+        console.log("Analysis result:", result);
+        if (result.events && result.events.length > 0) {
+          setAnalysisEvents(result.events.sort((a, b) => a.timestamp - b.timestamp));
+          setExtractionMethod(result.extractionMethod || "unknown");
+          setVideoId(extractedId);
+          updateUrl(extractedId);
+          console.log("Analysis completed successfully with", result.events.length, "events");
+        } else {
+          console.log("Analysis completed but no events found");
+          setError("Analysis completed but no negative content was detected in this video.");
+          setVideoId(extractedId);
+          updateUrl(extractedId);
+        }
       } catch (e) {
-        console.error(e);
+        console.error("Analysis failed:", e);
         if (e instanceof Error) {
           setError(e.message);
         } else {
           setError("An unknown error occurred during analysis.");
+        }
+        if (!videoId) {
+          setVideoId(extractedId);
+          updateUrl(extractedId);
         }
       } finally {
         setIsLoading(false);

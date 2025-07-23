@@ -72,7 +72,6 @@ const App: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setAnalysisEvents([]);
-        setVideoId(null);
         setKidFriendlyScore(null);
         setVideoDuration(null);
         setYoutubeUrl(url);
@@ -109,6 +108,12 @@ const App: React.FC = () => {
                 setError(e.message);
             } else {
                 setError('An unknown error occurred during analysis.');
+            }
+            // Keep the current videoId if analysis fails, so the UI doesn't disappear
+            // Only set videoId if we don't already have one
+            if (!videoId) {
+                setVideoId(extractedId);
+                updateUrl(extractedId);
             }
         } finally {
             setIsLoading(false);

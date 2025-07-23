@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlayIcon, LoaderIcon } from './icons';
 
 interface UrlInputFormProps {
@@ -9,6 +9,11 @@ interface UrlInputFormProps {
 
 export const UrlInputForm: React.FC<UrlInputFormProps> = ({ onSubmit, isLoading, initialUrl }) => {
   const [url, setUrl] = useState(initialUrl);
+
+  // Update internal state when initialUrl prop changes
+  useEffect(() => {
+    setUrl(initialUrl);
+  }, [initialUrl]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
